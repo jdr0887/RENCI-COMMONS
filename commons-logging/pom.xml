@@ -1,0 +1,58 @@
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+	<name>COMMONS.COMMONS-LOGGING</name>
+	<parent>
+		<groupId>org.renci</groupId>
+		<artifactId>commons</artifactId>
+		<version>1.0-SNAPSHOT</version>
+	</parent>
+	<modelVersion>4.0.0</modelVersion>
+	<groupId>org.renci.commons</groupId>
+	<artifactId>commons-logging</artifactId>
+	<version>0.1-SNAPSHOT</version>
+	<packaging>jar</packaging>
+	<dependencies>
+		<dependency>
+			<groupId>commons-logging</groupId>
+			<artifactId>commons-logging</artifactId>
+			<version>1.1</version>
+		</dependency>
+	</dependencies>
+	<build>
+		<plugins>
+			<plugin>
+				<artifactId>maven-antrun-plugin</artifactId>
+				<executions>
+					<execution>
+						<id>0</id>
+						<phase>validate</phase>
+						<configuration>
+							<tasks>
+								<condition property="log.home.value" else="${user.home}/logs" value="${log.home}">
+									<isset property="log.home" />
+								</condition>
+								<echo message="LOG.HOME = ${log.home.value}" />
+								<copy overwrite="true" file="${basedir}/src/main/resources/log4j.xml.template" tofile="${basedir}/src/main/resources/log4j.xml" />
+								<replace file="${basedir}/src/main/resources/log4j.xml">
+									<replacefilter token="@LOGHOME@" value="${log.home.value}" />
+								</replace>
+							</tasks>
+						</configuration>
+						<goals>
+							<goal>run</goal>
+						</goals>
+					</execution>
+				</executions>
+			</plugin>
+		</plugins>
+		<resources>
+			<resource>
+				<directory>src/main/resources</directory>
+				<filtering>false</filtering>
+				<includes>
+					<include>**/*.xml</include>
+					<include>**/*.properties</include>
+				</includes>
+			</resource>
+		</resources>
+	</build>
+</project>

@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="ISO-8859-1"?>
+<project name="COMMON - LOGGING">
+  <bannerLeft>
+    <name>Bioportal</name>
+    <src>http://www.renci.org/~jdr0887/RENCImain2.jpg</src>
+  </bannerLeft>
+  <bannerRight>
+    <src></src>
+  </bannerRight>
+  <body>
+    <links>
+      <item name="Continuum" href="http://devtools.renci.org:8080/continuum" />
+      <item name="DEVTOOLS" href="http://devtools.renci.org/" />
+    </links>
+    <menu ref="parent"/>
+    <menu name="COMMON - LOGGING" inherit="top">
+      <item name="Introduction" href="index.html"/>
+      <item name="How to Use" href="usage.html" />
+    </menu>
+    <menu ref="reports"/>
+  </body>
+</project>
