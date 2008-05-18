@@ -9,12 +9,12 @@ import java.util.Properties;
 public class ConfigFactory {
 
     public static ConfigService createConfigService(String projectName) {
-        ConfigService configService = ConfigServiceImpl.getInstance(projectName);
+        ConfigService configService = new ConfigServiceImpl(projectName);
         return configService;
     }
 
     public static ConfigService createConfigService(String projectName, Properties properties) {
-        ConfigService configService = ConfigServiceImpl.getInstance(projectName, properties);
+        ConfigService configService = new ConfigServiceImpl(projectName, properties);
         return configService;
     }
 

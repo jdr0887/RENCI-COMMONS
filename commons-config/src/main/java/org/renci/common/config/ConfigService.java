@@ -13,7 +13,14 @@ public interface ConfigService {
      * @return
      */
     public File getConfigDirectory();
-    
+
+    /**
+     * 
+     * @param name
+     * @param value
+     */
+    public void setProperty(String name, String value);
+
     /**
      * 
      * @param property

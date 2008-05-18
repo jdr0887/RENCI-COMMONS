@@ -23,4 +23,11 @@ public class ConfigServiceTest {
         assertEquals(testValue, "test.value");
     }
 
+    @Test
+    public void testSetProperty() {
+        ConfigService mgr = ConfigFactory.createConfigService("test");
+        assertNotNull(mgr);
+        mgr.setProperty("asdfasd", "qwerqwer");
+    }
+
 }

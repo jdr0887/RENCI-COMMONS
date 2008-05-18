@@ -33,16 +33,4 @@ public abstract class AbstractConfigService {
         this.projectDir = projectDir;
     }
 
-    protected String readResourceToString(String resource) {
-        ClassLoader cl = Thread.currentThread().getContextClassLoader();
-        InputStream is = cl.getResourceAsStream(resource);
-        String ret = null;
-        try {
-            ret = IOUtils.toString(is);
-        } catch (IOException e1) {
-            e1.printStackTrace();
-        }
-        return ret;
-    }
-
 }
