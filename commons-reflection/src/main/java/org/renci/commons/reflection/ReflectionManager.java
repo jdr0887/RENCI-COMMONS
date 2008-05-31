@@ -40,18 +40,18 @@ public class ReflectionManager {
      * @param filteredAnnotation
      * @return
      */
-    public List<Class> lookupClassList(String pkg, String regex, Class filteredAnnotation) {
-        List<Class> ret = new ArrayList<Class>();
-        List<Class> classList = new ArrayList<Class>();
+    public List<Class<?>> lookupClassList(String pkg, String regex, Class filteredAnnotation) {
+        List<Class<?>> ret = new ArrayList<Class<?>>();
+        List<Class<?>> classList = new ArrayList<Class<?>>();
 
         try {
             getClasses(classList, pkg);
 
-            Map<String, List<Class>> classesByPackageMap = new HashMap<String, List<Class>>();
+            Map<String, List<Class<?>>> classesByPackageMap = new HashMap<String, List<Class<?>>>();
 
             for (Class<?> clazz : classList) {
                 String fullPackage = clazz.getPackage().toString();
-                classesByPackageMap.put(fullPackage, new ArrayList<Class>());
+                classesByPackageMap.put(fullPackage, new ArrayList<Class<?>>());
             }
 
             for (Class<?> clazz : classList) {
@@ -60,7 +60,7 @@ public class ReflectionManager {
             }
             
             for (String key : classesByPackageMap.keySet()) {
-                List<Class> classes = classesByPackageMap.get(key);
+                List<Class<?>> classes = classesByPackageMap.get(key);
 
                 for (Class<?> c : classes) {
 
@@ -100,11 +100,11 @@ public class ReflectionManager {
      * @param regex
      * @return
      */
-    public List<Class> lookupClassList(String pkg, String regex) {
+    public List<Class<?>> lookupClassList(String pkg, String regex) {
         return lookupClassList(pkg, regex, null);
     }
 
-    private void getClasses(List<Class> cl, String pkgName) throws ClassNotFoundException {
+    private void getClasses(List<Class<?>> cl, String pkgName) throws ClassNotFoundException {
         // Get a File object for the package
         ArrayList<File> jarFiles = new ArrayList<File>();
         String path = pkgName.replace('.', '/');
