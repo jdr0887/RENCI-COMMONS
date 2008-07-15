@@ -27,8 +27,8 @@
 						<phase>validate</phase>
 						<configuration>
 							<tasks>
-								<condition property="log.home.value" else="${user.home}/logs" value="${log.home}">
-									<isset property="log.home" />
+								<condition property="log.home.value" else="${user.home}/logs" value="${log-home}">
+									<isset property="log-home" />
 								</condition>
 								<echo message="LOG.HOME = ${log.home.value}" />
 								<copy overwrite="true" file="${basedir}/src/main/resources/log4j.xml.template" tofile="${basedir}/src/main/resources/log4j.xml" />

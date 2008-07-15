@@ -6,6 +6,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 import org.apache.commons.io.FileUtils;
+import org.apache.commons.io.IOUtils;
 
 /**
  * This is really a wrapper for running cmdline applications locally
@@ -17,22 +18,22 @@ import org.apache.commons.io.FileUtils;
 public class Executor {
 
 	// the directory where to run the command from
-	protected File workDir;
+	private File workDir;
 
 	// the shell environment
-	protected Map<String, String> environment;
+    private Map<String, String> environment;
 
 	// the command to run
-	protected String command;
+    private String command;
 
 	// exit value
-	protected int exitCode;
+    private int exitCode;
 
 	// stdout
-	protected String stdout;
+    private String stdout;
 
 	// stderr
-	protected String stderr;
+    private String stderr;
 
 	/**
 	 * 
@@ -42,8 +43,18 @@ public class Executor {
 	public Executor(String command) {
 		this.command = command;
 		environment = new HashMap<String, String>();
-		workDir = new File("/tmp");
 	}
+
+    /**
+     * 
+     * @param command
+     * @param workDir
+     */
+    public Executor(String command, File workDir) {
+        this.command = command;
+        this.workDir = workDir;
+        environment = new HashMap<String, String>();
+    }
 
 
 	/**
@@ -91,17 +102,9 @@ public class Executor {
 			env.putAll(environment);
 			Process process = pb.start();
 
-			exitCode = process.waitFor();
-
-			StreamGobbler stdoutGobbler = new StreamGobbler(process
-					.getInputStream());
-			stdoutGobbler.start();
-			this.stdout = stdoutGobbler.getOutput();
-
-			StreamGobbler stderrGobbler = new StreamGobbler(process
-					.getErrorStream());
-			stderrGobbler.start();
-			this.stderr = stderrGobbler.getOutput();
+			this.exitCode = process.waitFor();
+            this.stdout = IOUtils.toString(process.getInputStream());
+            this.stderr = IOUtils.toString(process.getErrorStream());
 
 		} catch (IOException e) {
 			throw new ExecutorException(e.getMessage());

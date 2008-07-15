@@ -20,8 +20,7 @@ public class ExecutorTest {
 
 	@Test
     public void testBinDate() {
-        Executor cmd = new Executor("/bin/date");
-        cmd.setWorkDir(new File("/tmp"));
+        Executor cmd = new Executor("/bin/date", new File("/tmp"));
         try {
             cmd.execute();
             System.out.println("Stdout: " + cmd.getStdout());
@@ -34,7 +33,7 @@ public class ExecutorTest {
 
 	@Test
     public void testBinTrue() {
-    	Executor cmd = new Executor("/bin/true");
+    	Executor cmd = new Executor("/bin/true", new File("/tmp"));
         int exitCode = -1;
         try {
             cmd.execute();
@@ -49,7 +48,7 @@ public class ExecutorTest {
 
 	@Test
     public void testBinFalse() {
-    	Executor cmd = new Executor("/bin/false");
+    	Executor cmd = new Executor("/bin/false", new File("/tmp"));
         int exitCode = -1;
         try {
             cmd.execute();
@@ -64,7 +63,7 @@ public class ExecutorTest {
     
 	@Test
     public void testInputRedirect() {
-    	Executor cmd = new Executor("/bin/true </dev/null");
+    	Executor cmd = new Executor("/bin/true </dev/null", new File("/tmp"));
         try {
             cmd.execute();
         } catch (ExecutorException e) {
@@ -75,7 +74,7 @@ public class ExecutorTest {
 
 	@Test
     public void testbigOutput() {
-    	Executor cmd = new Executor("find /usr/bin");
+    	Executor cmd = new Executor("find /usr/bin", new File("/tmp"));
         try {
             cmd.execute();
         } catch (ExecutorException e) {
@@ -91,7 +90,7 @@ public class ExecutorTest {
         int exitCode = -1;
         Map env = new HashMap();
         env.put("TESTVARIABLE", "somevalue");
-        Executor cmd = new Executor("env | grep TESTVARIABLE");
+        Executor cmd = new Executor("env | grep TESTVARIABLE", new File("/tmp"));
         cmd.setEnvironment(env);
         try {
             cmd.execute();
