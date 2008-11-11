@@ -1,8 +1,9 @@
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+  xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
   <name>COMMONS</name>
   <modelVersion>4.0.0</modelVersion>
   <groupId>org.renci</groupId>
-  <version>1.0</version>
+  <version>1.0-SNAPSHOT</version>
   <artifactId>commons</artifactId>
   <packaging>pom</packaging>
   <url>http://beluga.renci.org/m2/html/project-info.html</url>
@@ -33,7 +34,7 @@
     </notifiers>
   </ciManagement>
   <scm>
-    <connection>scm:git:ssh://jdr0887@www.renci.org/home/jdr0887/public_html/git-repo/commons.git</connection>
+    <connection>scm:git:git://www.renci.org/~jdr0887/git-repo/commons.git</connection>
     <tag>master</tag>
     <url>http://www.renci.org/~jdr0887/git-repo/commons.git</url>
   </scm>
