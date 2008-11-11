@@ -66,7 +66,7 @@ public class Executor {
 	public int execute() throws ExecutorException {
 
 		// create a shell script with the command line in it
-		StringBuffer wrapperContents = new StringBuffer("#!/bin/sh\n");
+		StringBuffer wrapperContents = new StringBuffer("#!/bin/sh -e\n");
 		wrapperContents.append("if [ -e ~/.biorc ]; then . ~/.biorc; fi")
 				.append("\n");
 		wrapperContents.append("cd " + workDir.getAbsolutePath()).append("\n");
