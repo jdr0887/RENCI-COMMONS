@@ -65,7 +65,9 @@ public class ConfigServiceImpl extends AbstractConfigService implements ConfigSe
     /*
      * (non-Javadoc)
      * 
-     * @see org.renci.common.configuration.ConfigurationService#getProperty(java.lang.String)
+     * @see
+     * org.renci.common.configuration.ConfigurationService#getProperty(java.
+     * lang.String)
      */
     public String getProperty(String property) {
         return (config.getString(property));
@@ -74,7 +76,9 @@ public class ConfigServiceImpl extends AbstractConfigService implements ConfigSe
     /*
      * (non-Javadoc)
      * 
-     * @see org.renci.common.configuration.ConfigurationService#getPropertyArray(java.lang.String)
+     * @see
+     * org.renci.common.configuration.ConfigurationService#getPropertyArray(
+     * java.lang.String)
      */
     public String[] getPropertyArray(String property) {
         return (config.getStringArray(property));
@@ -93,7 +97,7 @@ public class ConfigServiceImpl extends AbstractConfigService implements ConfigSe
      * (non-Javadoc)
      * 
      * @see org.renci.common.config.ConfigService#getProperty(java.lang.String,
-     *      java.lang.String)
+     * java.lang.String)
      */
     public String getProperty(String property, String def) {
         String ret = getProperty(property);
@@ -106,8 +110,9 @@ public class ConfigServiceImpl extends AbstractConfigService implements ConfigSe
     /*
      * (non-Javadoc)
      * 
-     * @see org.renci.common.config.ConfigService#getPropertyArray(java.lang.String,
-     *      java.lang.String[])
+     * @see
+     * org.renci.common.config.ConfigService#getPropertyArray(java.lang.String,
+     * java.lang.String[])
      */
     public String[] getPropertyArray(String property, String[] def) {
         String[] ret = getPropertyArray(property);
@@ -115,6 +120,10 @@ public class ConfigServiceImpl extends AbstractConfigService implements ConfigSe
             return def;
         }
         return ret;
+    }
+
+    public void addAll(Properties properties) {
+        this.properties.putAll(properties);
     }
 
 }

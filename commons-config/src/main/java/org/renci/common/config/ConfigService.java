@@ -1,6 +1,7 @@
 package org.renci.common.config;
 
 import java.io.File;
+import java.util.Properties;
 
 /**
  * 
@@ -49,5 +50,11 @@ public interface ConfigService {
      * @return
      */
     public String[] getPropertyArray(String property, String[] def);
+
+    /**
+     * 
+     * @param properties
+     */
+    public void addAll(Properties properties);
 
 }
