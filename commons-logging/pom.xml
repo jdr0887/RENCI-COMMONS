@@ -16,43 +16,10 @@
 			<artifactId>commons-logging</artifactId>
 			<version>1.1</version>
 		</dependency>
+		<dependency>
+			<groupId>velocity</groupId>
+			<artifactId>velocity</artifactId>
+			<version>1.5</version>
+		</dependency>
 	</dependencies>
-	<build>
-		<plugins>
-			<plugin>
-				<artifactId>maven-antrun-plugin</artifactId>
-				<executions>
-					<execution>
-						<id>0</id>
-						<phase>validate</phase>
-						<configuration>
-							<tasks>
-								<condition property="log.home.value" else="${user.home}/logs" value="${log-home}">
-									<isset property="log-home" />
-								</condition>
-								<echo message="LOG.HOME = ${log.home.value}" />
-								<copy overwrite="true" file="${basedir}/src/main/resources/log4j.xml.template" tofile="${basedir}/src/main/resources/log4j.xml" />
-								<replace file="${basedir}/src/main/resources/log4j.xml">
-									<replacefilter token="@LOGHOME@" value="${log.home.value}" />
-								</replace>
-							</tasks>
-						</configuration>
-						<goals>
-							<goal>run</goal>
-						</goals>
-					</execution>
-				</executions>
-			</plugin>
-		</plugins>
-		<resources>
-			<resource>
-				<directory>src/main/resources</directory>
-				<filtering>false</filtering>
-				<includes>
-					<include>**/*.xml</include>
-					<include>**/*.properties</include>
-				</includes>
-			</resource>
-		</resources>
-	</build>
 </project>
