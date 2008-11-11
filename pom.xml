@@ -34,8 +34,7 @@
     </notifiers>
   </ciManagement>
   <scm>
-    <connection>scm:git:ssh://jdr0887@www.renci.org/home/jdr0887/public_html/git-repo/commons.git</connection>
-    <developerConnection>scm:git:ssh://jdr0887@www.renci.org/home/jdr0887/public_html/git-repo/commons.git</developerConnection>
+    <connection>scm:git:git://www.renci.org/~jdr0887/git-repo/commons.git</connection>
     <tag>master</tag>
     <url>http://www.renci.org/~jdr0887/git-repo/commons.git</url>
   </scm>
