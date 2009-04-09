@@ -20,7 +20,7 @@ public interface ConfigService {
      * @param name
      * @param value
      */
-    public void setProperty(String name, String value);
+    public void setProperty(String name, Object value);
 
     /**
      * 

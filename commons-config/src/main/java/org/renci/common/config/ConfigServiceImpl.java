@@ -51,9 +51,21 @@ public class ConfigServiceImpl extends AbstractConfigService implements ConfigSe
         } catch (ConfigurationException e) {
             e.printStackTrace();
         }
+
+        if (this.properties != null) {
+            for (Object key : this.properties.keySet()) {
+                config.setProperty(key.toString(), this.properties.get(key));
+            }
+            try {
+                config.save();
+            } catch (ConfigurationException e) {
+                e.printStackTrace();
+            }
+        }
+
     }
 
-    public void setProperty(String name, String value) {
+    public void setProperty(String name, Object value) {
         config.setProperty(name, value);
         try {
             config.save();
