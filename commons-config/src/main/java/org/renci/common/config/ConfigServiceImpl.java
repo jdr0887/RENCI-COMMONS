@@ -134,6 +134,50 @@ public class ConfigServiceImpl extends AbstractConfigService implements ConfigSe
         return ret;
     }
 
+    public Boolean getAsBoolean(String key) {
+        String val = getProperty(key);
+        boolean b = false;
+        if (val != null
+                && (val.toLowerCase().equals(Boolean.TRUE.toString()) || val.toLowerCase().equals("t")
+                        || val.toLowerCase().equals("yes") || val.toLowerCase().equals("y") || val.equals("1"))) {
+            b = true;
+        }
+        return b;
+    }
+
+    public Double getAsDouble(String key) {
+        String val = getProperty(key);
+        Double valDouble = null;
+        if (val != null) {
+            try {
+                valDouble = Double.valueOf(val);
+            } catch (NumberFormatException e) {
+                e.printStackTrace();
+            }
+        }
+        return valDouble;
+    }
+
+    public Long getAsLong(String key) {
+        String val = getProperty(key);
+        Long ret = null;
+        if (val != null) {
+            try {
+                ret = Long.valueOf(val);
+            } catch (NumberFormatException e) {
+                e.printStackTrace();
+            }
+        }
+        return ret;
+    }
+
+    public Boolean isSet(String key) {
+        if (StringUtils.isNotEmpty(getProperty(key))) {
+            return true;
+        }
+        return false;
+    }
+
     public void addAll(Properties properties) {
         this.properties.putAll(properties);
     }
