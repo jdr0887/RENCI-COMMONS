@@ -1,9 +1,12 @@
 package org.renci.commons.reflection;
 
 import java.io.File;
+import java.io.FilenameFilter;
 import java.io.IOException;
+import java.net.JarURLConnection;
 import java.net.URL;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.Enumeration;
 import java.util.HashMap;
 import java.util.List;
@@ -58,14 +61,14 @@ public class ReflectionManager {
                 String fullPackage = clazz.getPackage().toString();
                 classesByPackageMap.get(fullPackage).add(clazz);
             }
-            
+
             for (String key : classesByPackageMap.keySet()) {
                 List<Class<?>> classes = classesByPackageMap.get(key);
 
                 for (Class<?> c : classes) {
 
                     if (filteredAnnotation != null) {
-                        
+
                         if (!c.isEnum() && c.isAnnotationPresent(filteredAnnotation)) {
 
                             if (StringUtils.isNotEmpty(regex)) {
@@ -79,15 +82,15 @@ public class ReflectionManager {
                             }
 
                         }
-                        
+
                     } else {
                         ret.add(c);
                     }
-                    
+
                 }
 
             }
-            
+
         } catch (ClassNotFoundException e) {
             e.printStackTrace();
         }
@@ -106,7 +109,7 @@ public class ReflectionManager {
 
     private void getClasses(List<Class<?>> cl, String pkgName) throws ClassNotFoundException {
         // Get a File object for the package
-        ArrayList<File> jarFiles = new ArrayList<File>();
+        List<URL> jarList = new ArrayList<URL>();
         String path = pkgName.replace('.', '/');
         try {
             ClassLoader cld = Thread.currentThread().getContextClassLoader();
@@ -116,36 +119,42 @@ public class ReflectionManager {
             Enumeration<URL> resources = cld.getResources(path);
 
             while (resources.hasMoreElements()) {
+
                 URL resource = resources.nextElement();
                 String resourcePath = resource.getPath();
+                System.out.println("resourcePath = " + resourcePath);
                 if (resourcePath.indexOf(".jar") != -1) {
-
-                    System.out.println("resourcePath = " + resourcePath);
-
-                    int endIndex = resourcePath.indexOf(".jar");
-
-                    // file:/home/jdr0887/.m2/repository/org/renci/bioportal/applications/applications-core/0.1-SNAPSHOT/applications-core-0.1-SNAPSHOT.jar!/org/renci/applications
-                    if (resourcePath.startsWith("file:")) {
-                        String jarPath = resourcePath.substring(0, endIndex + 4).replace("file:", "");
-                        jarFiles.add(new File(jarPath));
+                    jarList.add(resource);
+                } else {
+                    File resourceFile = new File(resourcePath.replace("file:", ""));
+                    File[] files = resourceFile.listFiles(new FilenameFilter() {
+                        public boolean accept(File dir, String name) {
+                            if (name.endsWith(".class") && name.indexOf("$") == -1) {
+                                return true;
+                            }
+                            return false;
+                        }
+                    });
+                    for (File f : files) {
+                        cl.add(Class.forName(pkgName + "." + f.getName().replace(".class", "")));
                     }
-
                 }
 
             }
 
-            if (jarFiles != null && jarFiles.size() > 0) {
+            if (jarList != null && jarList.size() > 0) {
 
-                for (File jarFile : jarFiles) {
-                    JarFile currentFile = new JarFile(jarFile.getAbsolutePath());
-                    for (Enumeration e = currentFile.entries(); e.hasMoreElements();) {
-                        JarEntry current = (JarEntry) e.nextElement();
-                        if (current.getName().length() > path.length()
-                                && current.getName().substring(0, path.length()).equals(path)
-                                && current.getName().endsWith(".class")) {
-                            cl.add(Class.forName(current.getName().replaceAll("/", ".").replace(".class", "")));
+                for (URL url : jarList) {
+
+                    JarURLConnection conn = (JarURLConnection) url.openConnection();
+                    JarFile jar = conn.getJarFile();
+                    for (JarEntry jarEntry : Collections.list(jar.entries())) {
+                        if (jarEntry.getName().length() > path.length()
+                                && jarEntry.getName().substring(0, path.length()).equals(path)
+                                && jarEntry.getName().endsWith(".class")) {
+                            cl.add(Class.forName(jarEntry.getName().replaceAll("/", ".").replace(".class", "")));
                         } else {
-                            getClasses(cl, pkgName + "." + current.getName());
+                            getClasses(cl, pkgName + "." + jarEntry.getName());
                         }
                     }
                 }
