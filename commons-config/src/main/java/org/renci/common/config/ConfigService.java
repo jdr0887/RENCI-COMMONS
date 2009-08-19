@@ -57,4 +57,34 @@ public interface ConfigService {
      */
     public void addAll(Properties properties);
 
+    /**
+     * 
+     * @return
+     */
+    public Boolean isSet(String key);
+
+    /**
+     * Retrieves an attribute as bool
+     * 
+     * @param key
+     * @return
+     */
+    public Boolean getAsBoolean(String key);
+
+    /**
+     * Retrieves an attribute as longint
+     * 
+     * @param key
+     * @return
+     */
+    public Long getAsLong(String key);
+
+    /**
+     * Retrieves an attribute as double
+     * 
+     * @param key
+     * @return
+     */
+    public Double getAsDouble(String key);
+
 }
