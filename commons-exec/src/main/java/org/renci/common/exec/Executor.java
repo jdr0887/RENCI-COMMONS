@@ -2,11 +2,12 @@ package org.renci.common.exec;
 
 import java.io.File;
 import java.io.IOException;
+import java.io.InputStream;
+import java.io.OutputStream;
 import java.util.HashMap;
 import java.util.Map;
 
 import org.apache.commons.io.FileUtils;
-import org.apache.commons.io.IOUtils;
 
 /**
  * This is really a wrapper for running cmdline applications locally
@@ -30,10 +31,10 @@ public class Executor {
     private int exitCode;
 
 	// stdout
-    private String stdout;
+    private StringBuffer stdout;
 
 	// stderr
-    private String stderr;
+    private StringBuffer stderr;
 
 	/**
 	 * 
@@ -42,6 +43,7 @@ public class Executor {
 	 */
 	public Executor(String command) {
 		this.command = command;
+        this.workDir = new File("/tmp");
 		environment = new HashMap<String, String>();
 	}
 
@@ -64,11 +66,14 @@ public class Executor {
 	 * @throws ExecuteException
 	 */
 	public int execute() throws ExecutorException {
+	    
+	    Process process = null;
+        StreamGobbler stdoutGobbler = null;
+        StreamGobbler stderrGobbler = null;
 
 		// create a shell script with the command line in it
-		StringBuffer wrapperContents = new StringBuffer("#!/bin/sh -e\n");
-		wrapperContents.append("if [ -e ~/.biorc ]; then . ~/.biorc; fi")
-				.append("\n");
+		StringBuffer wrapperContents = new StringBuffer("#!/bin/bash -e\n");
+		wrapperContents.append("if [ -e ~/.biorc ]; then . ~/.biorc; fi\n");
 		wrapperContents.append("cd " + workDir.getAbsolutePath()).append("\n");
 		wrapperContents.append(command).append("\n");
 		File wrapperFile = null;
@@ -95,21 +100,71 @@ public class Executor {
 
 		// run it
 		try {
-			ProcessBuilder pb = new ProcessBuilder(wrapperFile
-					.getAbsolutePath());
+			ProcessBuilder pb = new ProcessBuilder(wrapperFile.getAbsolutePath());
 			pb.directory(workDir);
 			Map<String, String> env = pb.environment();
 			env.putAll(environment);
-			Process process = pb.start();
+			process = pb.start();
+			
+            // outputs
+            stdoutGobbler = new StreamGobbler(process.getInputStream());
+            stdoutGobbler.start();
+            stderrGobbler = new StreamGobbler(process.getErrorStream());
+            stderrGobbler.start();
 
-			this.exitCode = process.waitFor();
-            this.stdout = IOUtils.toString(process.getInputStream());
-            this.stderr = IOUtils.toString(process.getErrorStream());
+            try {
+                exitCode = process.waitFor();
+            } catch (InterruptedException exp) {
+                throw new ExecutorException("Interrupted: " + exp.getMessage());
+            }
+            
+            // let the io streams buffering catch up
+            try {
+                Thread.sleep(200);
+            } catch (InterruptedException e) {
+                // ignore
+            }
+            
+		} catch (IOException ioe) {
+		    throw new ExecutorException("Process error: " + ioe.getMessage());
+		} finally {
 
-		} catch (IOException e) {
-			throw new ExecutorException(e.getMessage());
-		} catch (InterruptedException e) {
-			throw new ExecutorException(e.getMessage());
+		    // get the outputs weather the process failed or not
+		    if (stdoutGobbler != null) {
+		        stdout = stdoutGobbler.getOutput();
+		    }
+		    if (stderrGobbler != null) {
+		        stderr = stderrGobbler.getOutput();
+		    }
+
+		    try {
+
+		        if (stdoutGobbler != null) {
+		            stdoutGobbler.close();
+		        }
+		        if (stderrGobbler != null) {
+		            stderrGobbler.close();
+		        }
+
+		        // close streams
+		        if (process != null) {
+		            InputStream istr = process.getErrorStream();
+		            if (istr != null) {
+		                istr.close();
+		            }
+		            OutputStream ostr = process.getOutputStream();
+		            if (ostr != null) {
+		                ostr.close();
+		            }
+		            istr = process.getErrorStream();
+		            if (istr != null) {
+		                istr.close();
+		            }
+		            process.destroy();
+		        }            
+		    } catch (IOException exp) {
+		        // ignore
+		    } 
 		}
 
 		// clean up
@@ -117,6 +172,7 @@ public class Executor {
 		return exitCode;
 	}
 
+	
 	public void setEnvironment(Map<String, String> environment) {
 		this.environment = environment;
 	}
@@ -143,15 +199,15 @@ public class Executor {
 	 * @return the stdout
 	 */
 	public String getStdout() {
-		return stdout;
+		return stdout.toString();
 	}
-
+	
 	/**
 	 * 
 	 * @return the stderr
 	 */
 	public String getStderr() {
-		return stderr;
+		return stderr.toString();
 	}
 
 }
