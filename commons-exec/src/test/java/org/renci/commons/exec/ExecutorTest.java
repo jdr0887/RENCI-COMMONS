@@ -18,7 +18,7 @@ import org.renci.common.exec.ExecutorException;
  */
 public class ExecutorTest {
 
-	@Test
+    @Test
     public void testBinDate() {
         Executor cmd = new Executor("/bin/date", new File("/tmp"));
         try {
@@ -31,9 +31,9 @@ public class ExecutorTest {
         }
     }
 
-	@Test
+    @Test
     public void testBinTrue() {
-    	Executor cmd = new Executor("/bin/true", new File("/tmp"));
+        Executor cmd = new Executor("/bin/true", new File("/tmp"));
         int exitCode = -1;
         try {
             cmd.execute();
@@ -46,9 +46,9 @@ public class ExecutorTest {
         assertEquals(exitCode, 0);
     }
 
-	@Test
+    @Test
     public void testBinFalse() {
-    	Executor cmd = new Executor("/bin/false", new File("/tmp"));
+        Executor cmd = new Executor("/bin/false", new File("/tmp"));
         int exitCode = -1;
         try {
             cmd.execute();
@@ -60,10 +60,10 @@ public class ExecutorTest {
         System.out.println("Exit code: " + exitCode);
         assertFalse(exitCode == 0);
     }
-    
-	@Test
+
+    @Test
     public void testInputRedirect() {
-    	Executor cmd = new Executor("/bin/true </dev/null", new File("/tmp"));
+        Executor cmd = new Executor("/bin/true </dev/null", new File("/tmp"));
         try {
             cmd.execute();
         } catch (ExecutorException e) {
@@ -72,9 +72,9 @@ public class ExecutorTest {
         }
     }
 
-	@Test
+    @Test
     public void testbigOutput() {
-    	Executor cmd = new Executor("find /usr/bin", new File("/tmp"));
+        Executor cmd = new Executor("find /usr/bin", new File("/tmp"));
         try {
             cmd.execute();
         } catch (ExecutorException e) {
@@ -85,7 +85,7 @@ public class ExecutorTest {
         System.out.println("Stderr size:" + cmd.getStderr().length());
     }
 
-	@Test
+    @Test
     public void testEnv() {
         int exitCode = -1;
         Map env = new HashMap();
