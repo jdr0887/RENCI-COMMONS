@@ -152,9 +152,9 @@
   </build>
   <modules>
     <module>commons-logging</module>
-    <module>commons-launcher</module>
     <module>commons-config</module>
     <module>commons-exec</module>
     <module>commons-reflection</module>
+    <module>commons-launcher</module>
   </modules>
 </project>
