@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="ISO-8859-1"?>
-<project name="BIOMOBY">
+<project name="RENCI COMMONS">
   <bannerLeft>
-    <name>Biomoby</name>
+    <name>Commons</name>
     <src>http://www.renci.org/~jdr0887/RENCImain2.jpg</src>
   </bannerLeft>
   <bannerRight>
