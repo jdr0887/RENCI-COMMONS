@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="ISO-8859-1"?>
-<project name="COMMON - LOGGING">
+<project name="COMMONS-LOGGING">
   <bannerLeft>
-    <name>Bioportal</name>
+    <name>COMMONS</name>
     <src>http://www.renci.org/~jdr0887/RENCImain2.jpg</src>
   </bannerLeft>
   <bannerRight>
@@ -13,7 +13,7 @@
       <item name="DEVTOOLS" href="http://devtools.renci.org/" />
     </links>
     <menu ref="parent"/>
-    <menu name="COMMON - LOGGING" inherit="top">
+    <menu name="COMMON-LOGGING" inherit="top">
       <item name="Introduction" href="index.html"/>
       <item name="How to Use" href="usage.html" />
     </menu>
