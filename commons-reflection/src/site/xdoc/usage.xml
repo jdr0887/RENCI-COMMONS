@@ -18,7 +18,7 @@
 	<source>
 
         ReflectionManager rManager = ReflectionManager.getInstance();
-        List<Class<?>> classList = rManager.lookupClassList("org.renci.sp.applications.basic", null, Application.class);
+        List&lt;Class&lt;?&gt;&gt; classList = rManager.lookupClassList("org.renci.sp.applications.basic", null, Application.class);
 
 	</source>
       </subsection>
