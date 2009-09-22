@@ -1,0 +1,27 @@
+<document>
+  <properties>
+    <author email="jdr0887@renci.org">Jason Reilly</author>
+  </properties>
+  <body>
+    <section name="How To Use">
+      <p>In order to use this project you will need to you will need to
+      specify the following in your pom.xml file:</p>
+      <source>
+	<![CDATA[ 
+ <dependency>
+	 <groupId>org.renci.commons</groupId>
+	 <artifactId>commons-reflection</artifactId>
+	 <version>0.1</version>
+ </dependency>]]>
+      </source>
+      <subsection name="Examples">
+	<source>
+
+        ReflectionManager rManager = ReflectionManager.getInstance();
+        List<Class<?>> classList = rManager.lookupClassList("org.renci.sp.applications.basic", null, Application.class);
+
+	</source>
+      </subsection>
+    </section>
+  </body>
+</document>

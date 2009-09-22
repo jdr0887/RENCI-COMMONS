@@ -1,0 +1,19 @@
+<document>
+  <properties>
+    <author email="jdr0887@renci.org">Jason Reilly</author>
+  </properties>
+  <body>
+    <section name="How To Use">
+      <p>In order to use this project you will need to you will need to
+      specify the following in your pom.xml file:</p>
+      <source>
+	<![CDATA[ 
+<dependency>
+     <groupId>org.renci.commons</groupId>
+     <artifactId>commons-launcher</artifactId>
+     <version>0.1</version>
+</dependency>]]>
+      </source>
+    </section>
+  </body>
+</document>
