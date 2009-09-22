@@ -13,7 +13,10 @@
       <item name="DEVTOOLS" href="http://devtools.renci.org/"/>
     </links>
     <menu ref="parent"/>
-    <menu ref="modules"/>
+    <menu name="COMMONS-REFLECTION" inherit="top">
+      <item name="Introduction" href="index.html"/>
+      <item name="How to Use" href="usage.html" />
+    </menu>
     <menu ref="reports"/>
   </body>
 </project>

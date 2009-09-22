@@ -3,8 +3,8 @@
     <author email="jdr0887@renci.org">Jason Reilly</author>
   </properties>
   <body>
-    <section name="Commons Exec">
-      <p></p>
+    <section name="Introduction">
+      <p>This project provides an interface to execute command line applications.</p>
     </section>
   </body>
 </document>

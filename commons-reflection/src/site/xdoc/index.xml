@@ -3,8 +3,11 @@
     <author email="jdr0887@renci.org">Jason Reilly</author>
   </properties>
   <body>
-    <section name="Commons Reflection">
-      <p></p>
+    <section name="Introduction">
+      <p>This project aims to provide a utility to get a list of annotated classes by package.</p>
+      <subsection name="Notes">
+	<p>Will find classes on by URI. (in local fs, in jar, or over url)</p>
+      </subsection>
     </section>
   </body>
 </document>

@@ -3,8 +3,11 @@
     <author email="jdr0887@renci.org">Jason Reilly</author>
   </properties>
   <body>
-    <section name="Commons Launcher">
-      <p></p>
+    <section name="Introduction">
+      <p>This project aims to provide a basic api to access build time properties.</p>
+      <subsection name="Notes">
+	<p>All properties are initially set in ~/.m2/settings.xml</p>
+      </subsection>
     </section>
   </body>
 </document>
