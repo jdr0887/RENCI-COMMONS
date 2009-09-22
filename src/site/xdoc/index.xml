@@ -4,7 +4,7 @@
   </properties>
   <body>
     <section name="Commons">
-      <p></p>
+      <p>This project aims to provide high level common utilities for RENCI projects.</p>
     </section>
   </body>
 </document>
