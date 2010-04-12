@@ -3,6 +3,7 @@ package org.renci.common.config;
 import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
+import java.io.Serializable;
 import java.util.Properties;
 
 import org.apache.commons.configuration.ConfigurationException;
@@ -14,7 +15,7 @@ import org.apache.commons.lang.StringUtils;
  * 
  * @author jdr0887
  */
-public class ConfigServiceImpl extends AbstractConfigService implements ConfigService {
+public class ConfigServiceImpl extends AbstractConfigService implements ConfigService, Serializable {
 
     private PropertiesConfiguration config = null;
 
