@@ -1,6 +1,7 @@
 package org.renci.common.config;
 
 import java.io.File;
+import java.io.Serializable;
 import java.io.IOException;
 import java.io.InputStream;
 
@@ -10,7 +11,7 @@ import org.apache.commons.io.IOUtils;
  * 
  * @author jdr0887
  */
-public abstract class AbstractConfigService {
+public abstract class AbstractConfigService implements Serializable {
     
     protected String projectName;
 
