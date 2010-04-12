@@ -3,6 +3,7 @@ package org.renci.commons.launcher;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 /**
  * 
@@ -12,7 +13,11 @@ public class LaunchDescriptorBean {
 
     protected Long jobId;
 
+    protected List<String> preCommands;
+
     protected List<String> commands;
+
+    protected List<String> postCommands;
 
     protected List<String> inputFilesToTransfer;
 
@@ -24,13 +29,19 @@ public class LaunchDescriptorBean {
 
     public LaunchDescriptorBean() {
         super();
-        this.commands = new LinkedList<String>();
+        init();
     }
 
     public LaunchDescriptorBean(Long jobId) {
         super();
         this.jobId = jobId;
+        init();
+    }
+
+    private void init() {
+        this.preCommands = new LinkedList<String>();
         this.commands = new LinkedList<String>();
+        this.postCommands = new LinkedList<String>();
     }
 
     /**
@@ -121,6 +132,76 @@ public class LaunchDescriptorBean {
      */
     public void setOutputFilesToTransfer(List<String> outputFilesToTransfer) {
         this.outputFilesToTransfer = outputFilesToTransfer;
+    }
+
+    /**
+     * @return the preCommands
+     */
+    public List<String> getPreCommands() {
+        return preCommands;
+    }
+
+    /**
+     * @param preCommands
+     *            the preCommands to set
+     */
+    public void setPreCommands(List<String> preCommands) {
+        this.preCommands = preCommands;
+    }
+
+    /**
+     * @return the postCommands
+     */
+    public List<String> getPostCommands() {
+        return postCommands;
+    }
+
+    /**
+     * @param postCommands
+     *            the postCommands to set
+     */
+    public void setPostCommands(List<String> postCommands) {
+        this.postCommands = postCommands;
+    }
+
+    public String toString() {
+        StringBuilder sb = new StringBuilder();
+        sb.append("jobId = ").append(jobId).append("\n");
+        if (commands != null && commands.size() > 0) {
+            sb.append("commands.size() = ").append(commands.size()).append("\n");
+        } else {
+            sb.append("commands is null ").append("\n");
+        }
+
+        if (inputFilesToTransfer != null && inputFilesToTransfer.size() > 0) {
+            for (String inputFileToTransfer : inputFilesToTransfer) {
+                sb.append("inputFileToTransfer = ").append(inputFileToTransfer).append("\n");
+            }
+        } else {
+            sb.append("inputFilesToTransfer is null ").append("\n");
+        }
+
+        if (requiredInputMap != null && requiredInputMap.size() > 0) {
+            Set<String> keySet = requiredInputMap.keySet();
+            for (String key : keySet) {
+                sb.append("key = ").append(key);
+                sb.append(", value = ").append(requiredInputMap.get(key)).append("\n");
+            }
+        } else {
+            sb.append("requiredInputMap is null ").append("\n");
+        }
+
+        if (optionalInputMap != null && optionalInputMap.size() > 0) {
+            Set<String> keySet = optionalInputMap.keySet();
+            for (String key : keySet) {
+                sb.append("key = ").append(key);
+                sb.append(", value = ").append(optionalInputMap.get(key)).append("\n");
+            }
+        } else {
+            sb.append("optionalInputMap is null ").append("\n");
+        }
+
+        return sb.toString();
     }
 
 }
