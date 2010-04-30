@@ -40,6 +40,8 @@ public class Executor {
     // stderr
     private StringBuffer stderr;
 
+    private String scriptTemplate = null;
+
     /**
      * 
      * @param command
@@ -51,6 +53,7 @@ public class Executor {
         this.workDir = new File("/tmp");
         environment = new HashMap<String, String>();
         initVelocity();
+        scriptTemplate = readResourceToString("org/renci/commons/exec/script.sh.vm");
     }
 
     /**
@@ -64,6 +67,7 @@ public class Executor {
         this.workDir = workDir;
         environment = new HashMap<String, String>();
         initVelocity();
+        scriptTemplate = readResourceToString("org/renci/commons/exec/script.sh.vm");
     }
 
     private void initVelocity() {
@@ -75,7 +79,7 @@ public class Executor {
             e1.printStackTrace();
         }
     }
-    
+
     /**
      * run the command
      * 
@@ -88,12 +92,10 @@ public class Executor {
         StreamGobbler stdoutGobbler = null;
         StreamGobbler stderrGobbler = null;
 
-        String scriptTemplate = readResourceToString("org/renci/commons/exec/script.sh.vm");
-
         VelocityContext vc = new VelocityContext();
         vc.put("workDir", workDir.getAbsolutePath());
         vc.put("command", command);
-        
+
         File wrapperFile = null;
 
         // create the executable
@@ -190,8 +192,8 @@ public class Executor {
         wrapperFile.delete();
         return exitCode;
     }
-    
-    private String readResourceToString(String resource) throws ExecutorException {
+
+    private String readResourceToString(String resource) {
         ClassLoader cl = Thread.currentThread().getContextClassLoader();
         InputStream is = cl.getResourceAsStream(resource);
         String ret = null;
@@ -199,10 +201,18 @@ public class Executor {
             ret = IOUtils.toString(is);
         } catch (IOException e) {
             e.printStackTrace();
+        } finally {
+            try {
+                if (is != null) {
+                    is.close();
+                }
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
         }
         return ret;
     }
-    
+
     public void setEnvironment(Map<String, String> environment) {
         this.environment = environment;
     }
