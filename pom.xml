@@ -23,14 +23,6 @@
           <address>jdr0887@renci.org</address>
         </configuration>
       </notifier>
-      <notifier>
-        <type>mail</type>
-        <sendOnError>true</sendOnError>
-        <sendOnFailure>true</sendOnFailure>
-        <configuration>
-          <address>rynge@renci.org</address>
-        </configuration>
-      </notifier>
     </notifiers>
   </ciManagement>
   <licenses>    
@@ -54,17 +46,6 @@
       <organizationUrl>http://www.renci.org/</organizationUrl>
       <roles>
         <role>Senior Research Software Developer</role>
-      </roles>
-    </developer>
-    <developer>
-      <id>rynge</id>
-      <name>Mats Rynge</name>
-      <email>rynge@renci.org</email>
-      <url>http://www.renci.org/~rynge</url>
-      <organization>Rennaissance Computing Institute</organization>
-      <organizationUrl>http://www.renci.org</organizationUrl>
-      <roles>
-        <role>Software Configuration Manager</role>
       </roles>
     </developer>
   </developers>
@@ -119,24 +100,58 @@
       </plugin>
     </plugins>
   </reporting>
+  <dependencyManagement>
+    <dependencies>
+      <dependency>
+	<groupId>junit</groupId>
+	<artifactId>junit</artifactId>
+	<version>4.1</version>
+      </dependency>
+      <dependency>
+	<groupId>commons-io</groupId>
+	<artifactId>commons-io</artifactId>
+	<version>1.4</version>
+      </dependency>
+      <dependency>
+	<groupId>commons-lang</groupId>
+	<artifactId>commons-lang</artifactId>
+	<version>2.4</version>
+      </dependency>
+      <dependency>
+	<groupId>commons-configuration</groupId>
+	<artifactId>commons-configuration</artifactId>
+	<version>1.4</version>
+      </dependency>
+      <dependency>
+	<groupId>org.apache.velocity</groupId>
+	<artifactId>velocity</artifactId>
+	<version>1.6.4</version>
+      </dependency>
+      <dependency>
+	<groupId>commons-logging</groupId>
+	<artifactId>commons-logging</artifactId>
+	<version>1.1</version>
+      </dependency>
+      <dependency>
+	<groupId>log4j</groupId>
+	<artifactId>log4j</artifactId>
+	<version>1.2.14</version>
+      </dependency>
+    </dependencies>
+  </dependencyManagement>  
   <dependencies>
     <dependency>
       <groupId>junit</groupId>
       <artifactId>junit</artifactId>
-      <version>4.1</version>
       <scope>test</scope>
     </dependency>
     <dependency>
       <groupId>commons-io</groupId>
       <artifactId>commons-io</artifactId>
-      <version>1.4</version>
-      <scope>compile</scope>
     </dependency>
     <dependency>
       <groupId>commons-lang</groupId>
       <artifactId>commons-lang</artifactId>
-      <version>2.4</version>
-      <scope>compile</scope>
     </dependency>
   </dependencies>
   <build>
@@ -163,6 +178,5 @@
     <module>commons-config</module>
     <module>commons-exec</module>
     <module>commons-reflection</module>
-    <module>commons-launcher</module>
   </modules>
 </project>
