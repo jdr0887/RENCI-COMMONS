@@ -102,7 +102,7 @@ public class Executor {
         try {
             wrapperFile = File.createTempFile("shellwrapper-", ".sh", workDir);
             FileWriter fw = new FileWriter(wrapperFile);
-            Velocity.evaluate(vc, fw, null, scriptTemplate);
+            Velocity.evaluate(vc, fw, "Executor.execute", scriptTemplate);
             fw.flush();
             fw.close();
         } catch (IOException e) {
