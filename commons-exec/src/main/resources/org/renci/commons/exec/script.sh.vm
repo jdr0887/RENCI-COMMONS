@@ -1,0 +1,7 @@
+#!/bin/bash -e
+
+. ~/.science-portal.rc
+
+cd ${workDir}
+
+${command}
