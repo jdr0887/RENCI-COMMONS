@@ -1,16 +1,19 @@
 package org.renci.commons.exec;
 
 import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertTrue;
 
 import java.io.File;
+import java.util.Calendar;
 import java.util.HashMap;
 import java.util.Map;
 
 import org.junit.Test;
 import org.renci.common.exec.Executor;
 import org.renci.common.exec.ExecutorException;
+import org.renci.common.exec.Input;
+import org.renci.common.exec.Output;
 
 /**
  * 
@@ -20,11 +23,12 @@ public class ExecutorTest {
 
     @Test
     public void testBinDate() {
-        Executor cmd = new Executor("/bin/date", new File("/tmp"));
+        Executor cmd = Executor.getInstance();
+        Input input = new Input("/bin/date", new File("/tmp"));
         try {
-            cmd.execute();
-            System.out.println("Stdout: " + cmd.getStdout());
-            System.out.println("Stderr: " + cmd.getStderr());
+            Output output = cmd.run(input);
+            Calendar c = Calendar.getInstance();
+            assertTrue(output.getStdout().indexOf(c.get(Calendar.YEAR) + "") != -1);
         } catch (ExecutorException e) {
             e.printStackTrace();
             assertTrue(false);
@@ -33,39 +37,40 @@ public class ExecutorTest {
 
     @Test
     public void testBinTrue() {
-        Executor cmd = new Executor("/bin/true", new File("/tmp"));
+        Executor cmd = Executor.getInstance();
+        Input input = new Input("/bin/true", new File("/tmp"));
         int exitCode = -1;
         try {
-            cmd.execute();
+            Output output = cmd.run(input);
+            exitCode = output.getExitCode();
+            assertEquals(exitCode, 0);
         } catch (ExecutorException e) {
             e.printStackTrace();
             assertTrue(false);
         }
-        exitCode = cmd.getExitCode();
-        System.out.println("Exit code: " + exitCode);
-        assertEquals(exitCode, 0);
     }
 
     @Test
     public void testBinFalse() {
-        Executor cmd = new Executor("/bin/false", new File("/tmp"));
+        Executor cmd = Executor.getInstance();
+        Input input = new Input("/bin/false", new File("/tmp"));
         int exitCode = -1;
         try {
-            cmd.execute();
+            Output output = cmd.run(input);
+            exitCode = output.getExitCode();
+            assertFalse(exitCode == 0);
         } catch (ExecutorException e) {
             e.printStackTrace();
             assertTrue(false);
         }
-        exitCode = cmd.getExitCode();
-        System.out.println("Exit code: " + exitCode);
-        assertFalse(exitCode == 0);
     }
 
     @Test
     public void testInputRedirect() {
-        Executor cmd = new Executor("/bin/true </dev/null", new File("/tmp"));
+        Executor cmd = Executor.getInstance();
+        Input input = new Input("/bin/true </dev/null", new File("/tmp"));
         try {
-            cmd.execute();
+            cmd.run(input);
         } catch (ExecutorException e) {
             e.printStackTrace();
             assertTrue(false);
@@ -73,35 +78,36 @@ public class ExecutorTest {
     }
 
     @Test
-    public void testbigOutput() {
-        Executor cmd = new Executor("find /usr/bin", new File("/tmp"));
+    public void testBigOutput() {
+        Executor cmd = Executor.getInstance();
+        Input input = new Input("find /usr/bin", new File("/tmp"));
         try {
-            cmd.execute();
+            Output output = cmd.run(input);
+            assertTrue(output.getStdout().length() > 0);
+            assertTrue(output.getStderr().length() == 0);
         } catch (ExecutorException e) {
             e.printStackTrace();
             assertTrue(false);
         }
-        System.out.println("Stdout size:" + cmd.getStdout().length());
-        System.out.println("Stderr size:" + cmd.getStderr().length());
     }
 
     @Test
     public void testEnv() {
         int exitCode = -1;
+        
+        Executor cmd = Executor.getInstance();
+        Input input = new Input("env | grep TESTVARIABLE", new File("/tmp"));
         Map env = new HashMap();
         env.put("TESTVARIABLE", "somevalue");
-        Executor cmd = new Executor("env | grep TESTVARIABLE", new File("/tmp"));
-        cmd.setEnvironment(env);
+        input.setEnvironment(env);
         try {
-            cmd.execute();
+            Output output = cmd.run(input);
+            exitCode = output.getExitCode();
+            assertTrue(exitCode == 0);
         } catch (ExecutorException e) {
             e.printStackTrace();
             assertTrue(false);
         }
-        exitCode = cmd.getExitCode();
-        System.out.println("Exit code: " + exitCode);
-        System.out.println("Stdout: " + cmd.getStdout());
-        System.out.println("Stderr: " + cmd.getStderr());
     }
 
 }
