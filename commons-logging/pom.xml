@@ -9,7 +9,7 @@
   <groupId>org.renci.commons</groupId>
   <artifactId>commons-logging</artifactId>
   <version>0.4-SNAPSHOT</version>
-  <packaging>jar</packaging>
+  <packaging>bundle</packaging>
   <dependencies>
     <dependency>
       <groupId>commons-logging</groupId>
@@ -24,4 +24,18 @@
       <artifactId>velocity</artifactId>
     </dependency>
   </dependencies>
+  <build>
+    <plugins>
+      <plugin>
+        <groupId>org.apache.felix</groupId>
+        <artifactId>maven-bundle-plugin</artifactId>
+        <configuration>
+          <instructions>
+            <Export-Package>org.renci.common.logging*;version=${project.version}</Export-Package>
+            <Import-Package>*</Import-Package>
+          </instructions>
+        </configuration>
+      </plugin>
+    </plugins>
+  </build>
 </project>
