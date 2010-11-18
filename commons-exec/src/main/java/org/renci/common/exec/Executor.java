@@ -1,131 +1,79 @@
 package org.renci.common.exec;
 
+import java.io.BufferedOutputStream;
 import java.io.File;
-import java.io.FileWriter;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
-import java.util.HashMap;
+import java.util.Iterator;
 import java.util.Map;
-import java.util.Properties;
+import java.util.Set;
+import java.util.Vector;
 
-import org.apache.commons.io.IOUtils;
-import org.apache.velocity.VelocityContext;
-import org.apache.velocity.app.Velocity;
+import org.apache.commons.io.FileUtils;
 
-/**
- * This is really a wrapper for running cmdline applications locally
- * 
- * Requires jdk1.5 or greater
- * 
- * @author rynge, jdr0887
- */
 public class Executor {
 
-    // the directory where to run the command from
-    private File workDir;
+    public static Executor instance = null;
 
-    // the shell environment
-    private Map<String, String> environment;
-
-    // the command to run
-    private String command;
-
-    // exit value
-    private int exitCode;
-
-    // stdout
-    private StringBuffer stdout;
-
-    // stderr
-    private StringBuffer stderr;
-
-    private String scriptTemplate = null;
-
-    /**
-     * 
-     * @param command
-     *            command to run
-     */
-    public Executor(String command) {
-        super();
-        this.command = command;
-        this.workDir = new File("/tmp");
-        environment = new HashMap<String, String>();
-        initVelocity();
-        scriptTemplate = readResourceToString("org/renci/commons/exec/script.sh.vm");
-    }
-
-    /**
-     * 
-     * @param command
-     * @param workDir
-     */
-    public Executor(String command, File workDir) {
-        super();
-        this.command = command;
-        this.workDir = workDir;
-        environment = new HashMap<String, String>();
-        initVelocity();
-        scriptTemplate = readResourceToString("org/renci/commons/exec/script.sh.vm");
-    }
-
-    private void initVelocity() {
-        try {
-            Properties props = new Properties();
-            props.put("runtime.log.logsystem.class", "org.apache.velocity.runtime.log.NullLogChute");
-            Velocity.init(props);
-        } catch (Exception e1) {
-            e1.printStackTrace();
+    public static Executor getInstance() {
+        if (instance == null) {
+            return new Executor();
         }
+        return instance;
+    }
+
+    private Executor() {
+        super();
     }
 
     /**
      * run the command
      * 
      * @return exit code
-     * @throws ExecuteException
+     * @throws ExecutorException
      */
-    public int execute() throws ExecutorException {
+    public Output run(Input input) throws ExecutorException {
 
+        Runtime runtime = Runtime.getRuntime();
         Process process = null;
+        BufferedOutputStream stdinStream = null;
         StreamGobbler stdoutGobbler = null;
         StreamGobbler stderrGobbler = null;
-
-        VelocityContext vc = new VelocityContext();
-        vc.put("workDir", workDir.getAbsolutePath());
-        vc.put("command", command);
-
+        int exitCode = -1;
         File wrapperFile = null;
+        String wrapperContents = null;
+        long processStartTime = System.currentTimeMillis();
+        String delayedError = null;
 
-        // create the executable
+        Output output = new Output();
+
+        // create a shell script with the command line in it
+        wrapperContents = "#!/bin/bash -e\n" + "cd " + input.getWorkDir().getAbsolutePath() + "\n" + input.getCommand()
+                + "\n";
         try {
-            wrapperFile = File.createTempFile("shellwrapper-", ".sh", workDir);
-            FileWriter fw = new FileWriter(wrapperFile);
-            Velocity.evaluate(vc, fw, "Executor.execute", scriptTemplate);
-            fw.flush();
-            fw.close();
+            wrapperFile = File.createTempFile("shellwrapper-", ".sh", input.getWorkDir());
+            FileUtils.writeStringToFile(wrapperFile, wrapperContents, "UTF-8");
         } catch (IOException e) {
             throw new ExecutorException("Unable to create tmp file");
         }
 
-        // chmod the executable
+        // chmod the temp command file
         try {
-            Process chmodProcess = new ProcessBuilder("/bin/chmod", "755", wrapperFile.getAbsolutePath()).start();
-            chmodProcess.waitFor();
-        } catch (IOException e1) {
-            throw new ExecutorException(e1.getMessage());
-        } catch (InterruptedException e1) {
-            throw new ExecutorException(e1.getMessage());
+            process = runtime.exec("/bin/chmod 755 " + wrapperFile.getAbsolutePath());
+            process.waitFor();
+        } catch (IOException ioe) {
+            throw new ExecutorException("chmod problem: " + ioe.getMessage());
+        } catch (InterruptedException e) {
+            // ignore
         }
 
-        // run it
         try {
-            ProcessBuilder pb = new ProcessBuilder(wrapperFile.getAbsolutePath());
-            pb.directory(workDir);
-            Map<String, String> env = pb.environment();
-            env.putAll(environment);
-            process = pb.start();
+            String[] env = null;
+            if (input.getEnvironment() != null) {
+                env = environmentToArray(input.getEnvironment());
+            }
+            process = runtime.exec(wrapperFile.getAbsolutePath(), env, input.getWorkDir());
 
             // outputs
             stdoutGobbler = new StreamGobbler(process.getInputStream());
@@ -133,10 +81,49 @@ public class Executor {
             stderrGobbler = new StreamGobbler(process.getErrorStream());
             stderrGobbler.start();
 
+            // inputs
+            if (input.getStdin() != null) {
+                stdinStream = new BufferedOutputStream(process.getOutputStream());
+                stdinStream.write(input.getStdin().toString().getBytes());
+            }
+
+            // do we have a max runtime to consider?
+            if (input.getMaxRunTime() > 0) {
+                boolean stillRunning = true;
+                while (stillRunning) {
+
+                    long currentRunTime = (System.currentTimeMillis() - processStartTime) / 1000;
+
+                    // check timeout
+                    if (currentRunTime > input.getMaxRunTime()) {
+                        process.destroy();
+                        delayedError = "Process timed out";
+                    }
+
+                    // sleep
+                    try {
+                        Thread.sleep(1000);
+                    } catch (InterruptedException e) {
+                        // ignore
+                    }
+
+                    // now check the process
+                    try {
+                        exitCode = process.exitValue();
+                        output.setExitCode(exitCode);
+                        // can't get here until process has finished
+                        stillRunning = false;
+                    } catch (IllegalThreadStateException e) {
+                        // ignore
+                    }
+                }
+            }
+
             try {
                 exitCode = process.waitFor();
+                output.setExitCode(exitCode);
             } catch (InterruptedException exp) {
-                throw new ExecutorException("Interrupted: " + exp.getMessage());
+                delayedError = exp.getMessage();
             }
 
             // let the io streams buffering catch up
@@ -152,13 +139,17 @@ public class Executor {
 
             // get the outputs weather the process failed or not
             if (stdoutGobbler != null) {
-                stdout = stdoutGobbler.getOutput();
+                output.setStdout(stdoutGobbler.getOutput());
             }
             if (stderrGobbler != null) {
-                stderr = stderrGobbler.getOutput();
+                output.setStderr(stderrGobbler.getOutput());
             }
 
             try {
+
+                if (stdinStream != null) {
+                    stdinStream.close();
+                }
 
                 if (stdoutGobbler != null) {
                     stdoutGobbler.close();
@@ -169,7 +160,7 @@ public class Executor {
 
                 // close streams
                 if (process != null) {
-                    InputStream istr = process.getErrorStream();
+                    InputStream istr = process.getInputStream();
                     if (istr != null) {
                         istr.close();
                     }
@@ -183,71 +174,42 @@ public class Executor {
                     }
                     process.destroy();
                 }
+
             } catch (IOException exp) {
                 // ignore
             }
+
         }
 
         // clean up
         wrapperFile.delete();
-        return exitCode;
-    }
 
-    private String readResourceToString(String resource) {
-        ClassLoader cl = Thread.currentThread().getContextClassLoader();
-        InputStream is = cl.getResourceAsStream(resource);
-        String ret = null;
-        try {
-            ret = IOUtils.toString(is);
-        } catch (IOException e) {
-            e.printStackTrace();
-        } finally {
-            try {
-                if (is != null) {
-                    is.close();
-                }
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
+        if (delayedError != null) {
+            throw new ExecutorException(delayedError);
         }
-        return ret;
-    }
 
-    public void setEnvironment(Map<String, String> environment) {
-        this.environment = environment;
+        return output;
     }
 
     /**
-     * sets the location of the workdir
+     * Converts an environment map to an string array
      * 
-     * @param workDir
+     * @return the string array
      */
-    public void setWorkDir(File workDir) {
-        this.workDir = workDir;
-    }
+    protected String[] environmentToArray(Map<String, String> env) {
+        Set<String> keySet = env.keySet();
+        Iterator<String> keys = keySet.iterator();
+        Vector<String> envVec = new Vector<String>();
+        String[] envArr = new String[0];
 
-    /**
-     * 
-     * @return the exit code
-     */
-    public int getExitCode() {
-        return exitCode;
-    }
+        while (keys.hasNext()) {
+            Object key = keys.next();
+            Object val = env.get(key);
+            envVec.add("" + key + "=" + val + "");
+        }
 
-    /**
-     * 
-     * @return the stdout
-     */
-    public String getStdout() {
-        return stdout.toString();
-    }
+        envArr = (String[]) envVec.toArray(new String[0]);
 
-    /**
-     * 
-     * @return the stderr
-     */
-    public String getStderr() {
-        return stderr.toString();
+        return envArr;
     }
-
 }
