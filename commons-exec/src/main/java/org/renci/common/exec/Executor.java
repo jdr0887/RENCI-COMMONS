@@ -14,7 +14,7 @@ import org.apache.commons.io.FileUtils;
 
 public class Executor {
 
-    public static Executor instance = null;
+    private static Executor instance = null;
 
     public static Executor getInstance() {
         if (instance == null) {
