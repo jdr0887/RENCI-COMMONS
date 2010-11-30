@@ -33,8 +33,8 @@
     </license>
   </licenses>
   <scm>
-    <connection>scm:git:http://www.renci.org/~jdr0887/git-repo/commons.git</connection>
-    <developerConnection>scm:git:ssh://jdr0887@www.renci.org/home/jdr0887/public_html/git-repo/commons.git</developerConnection>
+    <connection>scm:git:ssh://developername@code.renci.org/gitroot/commons</connection>
+    <developerConnection>scm:git:ssh://developername@code.renci.org/gitroot/commons</developerConnection>
   </scm>
   <repositories>
     <repository>
