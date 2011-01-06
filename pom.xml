@@ -68,12 +68,17 @@
     <repository>
       <id>renci.repository</id>
       <name>renci.repository</name>
-      <url>scpexe://beluga.renci.org/nfs/software/dev/maven-repo/m2/repository</url>
+      <url>https://ci-dev.renci.org/nexus/content/repositories/release</url>
     </repository>
-    <site>
+    <snapshotRepository>
       <id>renci.repository</id>
       <name>renci.repository</name>
-      <url>scpexe://beluga.renci.org/nfs/software/dev/maven-repo/m2/commons</url>
+      <url>https://ci-dev.renci.org/nexus/content/repositories/snapshots</url>
+    </snapshotRepository>
+    <site>
+      <id>renci.site</id>
+      <name>renci.site</name>
+      <url>file:///${user.dir}/sites/commons</url>
     </site>
   </distributionManagement>
   <reporting>
