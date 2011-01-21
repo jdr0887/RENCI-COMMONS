@@ -68,7 +68,7 @@
     <repository>
       <id>renci.repository</id>
       <name>renci.repository</name>
-      <url>http://ci-dev.renci.org/nexus/content/repositories/release</url>
+      <url>http://ci-dev.renci.org/nexus/content/repositories/releases</url>
     </repository>
     <snapshotRepository>
       <id>renci.repository</id>
