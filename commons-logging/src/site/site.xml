@@ -1,8 +1,7 @@
 <?xml version="1.0" encoding="ISO-8859-1"?>
 <project name="COMMONS-LOGGING">
   <bannerLeft>
-    <name>RENCI Commons</name>
-    <src>http://www.renci.org/~jdr0887/RENCI-logo.jpg</src>
+    <name>COMMONS-LOGGING</name>
   </bannerLeft>
   <bannerRight>
     <src></src>
