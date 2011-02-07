@@ -7,6 +7,10 @@
   <artifactId>commons</artifactId>
   <packaging>pom</packaging>
   <url>http://www.renci.org/~jdr0887/projects/commons</url>
+  <organization>
+    <name>RENCI</name>
+    <url>http://www.renci.org</url>
+  </organization>
   <issueManagement>
     <system>gForge</system>
     <url>https://code.renci.org/gf/project/commons/tracker/</url>
