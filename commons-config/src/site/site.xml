@@ -2,7 +2,6 @@
 <project name="COMMONS-CONFIG">
   <bannerLeft>
     <name>RENCI Commons</name>
-    <src>http://www.renci.org/~jdr0887/RENCI-logo.jpg</src>
   </bannerLeft>
   <bannerRight>
     <src>
@@ -10,8 +9,8 @@
   </bannerRight>
   <body>
     <links>
-      <item name="Continuum" href="http://devtools.renci.org:8080/continuum" />
-      <item name="DEVTOOLS" href="http://devtools.renci.org/" />
+      <item name="gForge" href="https://code.renci.org/gf/project/commons"/>
+      <item name="Hudson" href="https://ci-dev.renci.org/hudson"/>
     </links>
     <menu ref="parent"/>
     <menu name="COMMONS-CONFIG" inherit="top">
