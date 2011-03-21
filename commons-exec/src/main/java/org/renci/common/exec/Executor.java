@@ -1,14 +1,17 @@
 package org.renci.common.exec;
 
+import static org.renci.common.exec.Constants.NL;
+
 import java.io.BufferedOutputStream;
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
+import java.util.ArrayList;
 import java.util.Iterator;
+import java.util.List;
 import java.util.Map;
 import java.util.Set;
-import java.util.Vector;
 
 import org.apache.commons.io.FileUtils;
 
@@ -35,25 +38,26 @@ public class Executor {
      */
     public Output run(Input input) throws ExecutorException {
 
-        Runtime runtime = Runtime.getRuntime();
+        final Runtime runtime = Runtime.getRuntime();
         Process process = null;
         BufferedOutputStream stdinStream = null;
         StreamGobbler stdoutGobbler = null;
         StreamGobbler stderrGobbler = null;
         int exitCode = -1;
         File wrapperFile = null;
-        String wrapperContents = null;
-        long processStartTime = System.currentTimeMillis();
+        final long processStartTime = System.currentTimeMillis();
         String delayedError = null;
 
-        Output output = new Output();
+        final Output output = new Output();
 
         // create a shell script with the command line in it
-        wrapperContents = "#!/bin/bash -e\n" + "cd " + input.getWorkDir().getAbsolutePath() + "\n" + input.getCommand()
-                + "\n";
+        StringBuilder wrapperContents = new StringBuilder();
+        wrapperContents.append("#!/bin/bash -e").append(NL);
+        wrapperContents.append("cd ").append(input.getWorkDir().getAbsolutePath()).append(NL);
+        wrapperContents.append(input.getCommand()).append(NL);
         try {
-            wrapperFile = File.createTempFile("shellwrapper-", ".sh", input.getWorkDir());
-            FileUtils.writeStringToFile(wrapperFile, wrapperContents, "UTF-8");
+            wrapperFile = File.createTempFile("shellwrapper-", ".sh");
+            FileUtils.writeStringToFile(wrapperFile, wrapperContents.toString(), "UTF-8");
         } catch (IOException e) {
             throw new ExecutorException("Unable to create tmp file");
         }
@@ -199,17 +203,14 @@ public class Executor {
     protected String[] environmentToArray(Map<String, String> env) {
         Set<String> keySet = env.keySet();
         Iterator<String> keys = keySet.iterator();
-        Vector<String> envVec = new Vector<String>();
-        String[] envArr = new String[0];
+        List<String> envList = new ArrayList<String>();
 
         while (keys.hasNext()) {
             Object key = keys.next();
             Object val = env.get(key);
-            envVec.add("" + key + "=" + val + "");
+            envList.add("" + key + "=" + val + "");
         }
 
-        envArr = (String[]) envVec.toArray(new String[0]);
-
-        return envArr;
+        return envList.toArray(new String[envList.size()]);
     }
 }
