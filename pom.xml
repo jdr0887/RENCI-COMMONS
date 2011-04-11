@@ -2,7 +2,7 @@
   <name>COMMONS</name>
   <modelVersion>4.0.0</modelVersion>
   <groupId>org.renci</groupId>
-  <version>1.4-SNAPSHOT</version>
+  <version>1.4</version>
   <artifactId>commons</artifactId>
   <packaging>pom</packaging>
   <url>http://www.renci.org/~jdr0887/projects/commons</url>
