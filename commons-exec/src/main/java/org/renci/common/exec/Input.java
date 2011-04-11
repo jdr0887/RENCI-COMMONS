@@ -20,6 +20,8 @@ public class Input {
     // stdin
     protected StringBuffer stdin;
 
+    private String profileFile;
+
     /**
      * 
      * @param command
@@ -109,6 +111,21 @@ public class Input {
      */
     public void setStdin(StringBuffer stdin) {
         this.stdin = stdin;
+    }
+
+    /**
+     * @return the profileFile
+     */
+    public String getProfileFile() {
+        return profileFile;
+    }
+
+    /**
+     * @param profileFile
+     *            the profileFile to set
+     */
+    public void setProfileFile(String profileFile) {
+        this.profileFile = profileFile;
     }
 
 }

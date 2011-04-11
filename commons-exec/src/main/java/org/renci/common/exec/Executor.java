@@ -14,6 +14,7 @@ import java.util.Map;
 import java.util.Set;
 
 import org.apache.commons.io.FileUtils;
+import org.apache.commons.lang.StringUtils;
 
 public class Executor {
 
@@ -53,7 +54,9 @@ public class Executor {
         // create a shell script with the command line in it
         StringBuilder wrapperContents = new StringBuilder();
         wrapperContents.append("#!/bin/bash -e").append(NL);
-        wrapperContents.append(". ~/.science-portal.rc").append(NL);
+        if (StringUtils.isNotEmpty(input.getProfileFile())) {
+            wrapperContents.append(". ").append(input.getProfileFile()).append(NL);
+        }  
         if (input.getWorkDir() != null) {
             wrapperContents.append("cd ").append(input.getWorkDir().getAbsolutePath()).append(NL);
         }
