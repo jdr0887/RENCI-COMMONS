@@ -87,4 +87,10 @@ public interface ConfigService {
      */
     public Double getAsDouble(String key);
 
+    /**
+     * 
+     * @return
+     */
+    public Properties getProperties();
+
 }
