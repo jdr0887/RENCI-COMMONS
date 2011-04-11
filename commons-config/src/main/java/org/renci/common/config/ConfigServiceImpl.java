@@ -17,6 +17,11 @@ import org.apache.commons.lang.StringUtils;
  */
 public class ConfigServiceImpl extends AbstractConfigService implements ConfigService, Serializable {
 
+    /**
+     * 
+     */
+    private static final long serialVersionUID = 1L;
+
     private PropertiesConfiguration config = null;
 
     private Properties properties;
@@ -66,6 +71,21 @@ public class ConfigServiceImpl extends AbstractConfigService implements ConfigSe
 
     }
 
+    /*
+     * (non-Javadoc)
+     * 
+     * @see org.renci.common.config.ConfigService#getProperties()
+     */
+    public Properties getProperties() {
+        return this.properties;
+    }
+
+    /*
+     * (non-Javadoc)
+     * 
+     * @see org.renci.common.config.ConfigService#setProperty(java.lang.String,
+     * java.lang.Object)
+     */
     public void setProperty(String name, Object value) {
         config.setProperty(name, value);
         try {
