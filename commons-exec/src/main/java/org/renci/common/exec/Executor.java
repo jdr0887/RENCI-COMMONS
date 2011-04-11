@@ -53,7 +53,10 @@ public class Executor {
         // create a shell script with the command line in it
         StringBuilder wrapperContents = new StringBuilder();
         wrapperContents.append("#!/bin/bash -e").append(NL);
-        wrapperContents.append("cd ").append(input.getWorkDir().getAbsolutePath()).append(NL);
+        wrapperContents.append(". ~/.science-portal.rc").append(NL);
+        if (input.getWorkDir() != null) {
+            wrapperContents.append("cd ").append(input.getWorkDir().getAbsolutePath()).append(NL);
+        }
         wrapperContents.append(input.getCommand()).append(NL);
         try {
             wrapperFile = File.createTempFile("shellwrapper-", ".sh");
