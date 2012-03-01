@@ -33,13 +33,15 @@ public class BashExecutor extends AbstractExecutor {
         super();
     }
 
-    /**
-     * run the command
+    /*
+     * (non-Javadoc)
      * 
-     * @return exit code
-     * @throws ShellExecutorException
+     * @see
+     * org.renci.common.exec.Executor#execute(org.renci.common.exec.CommandInput
+     * , java.io.File[])
      */
-    public CommandOutput execute(CommandInput input) throws ExecutorException {
+    public CommandOutput execute(CommandInput input, File... sources) throws ExecutorException {
+
         logger.debug("ENTERING run(ShellInput)");
         Runtime runtime = Runtime.getRuntime();
         Process process = null;
@@ -56,10 +58,18 @@ public class BashExecutor extends AbstractExecutor {
         output.setStartDate(new Date());
 
         // create a shell script with the command line in it
-        wrapperContents = String.format("#!/bin/bash -e%n%s%ncd %s%n%s%n", input.getSourceFile() == null ? "" : ". " + input
-                .getSourceFile().getAbsolutePath(), input.getWorkDir().getAbsolutePath(), input.getCommand());
+        StringBuilder sourceFileSB = new StringBuilder();
+        if (sources != null && sources.length > 0) {
+            for (File source : sources) {
+                sourceFileSB.append(String.format(". %s%n", source.getAbsolutePath()));
+            }
+        }
+
+        wrapperContents = String.format("#!/bin/bash -e%n%s%ncd %s%n%s%n", sourceFileSB.length() == 0 ? ""
+                : sourceFileSB.toString(), input.getWorkDir().getAbsolutePath(), input.getCommand());
         try {
             wrapperFile = File.createTempFile("shellwrapper-", ".sh", input.getWorkDir());
+            logger.info("wrapperContents: {}", wrapperContents);
             FileUtils.writeStringToFile(wrapperFile, wrapperContents, "UTF-8");
         } catch (IOException e) {
             throw new ExecutorException("Unable to create tmp file");
@@ -198,5 +208,16 @@ public class BashExecutor extends AbstractExecutor {
         }
 
         return output;
+    }
+
+    /*
+     * (non-Javadoc)
+     * 
+     * @see
+     * org.renci.common.exec.Executor#execute(org.renci.common.exec.CommandInput
+     * )
+     */
+    public CommandOutput execute(CommandInput input) throws ExecutorException {
+        return execute(input, (File[]) null);
     }
 }

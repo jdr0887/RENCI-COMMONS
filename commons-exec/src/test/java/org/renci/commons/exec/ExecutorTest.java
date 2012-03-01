@@ -11,10 +11,10 @@ import java.util.Map;
 
 import org.junit.Test;
 import org.renci.common.exec.BashExecutor;
-import org.renci.common.exec.Executor;
-import org.renci.common.exec.ExecutorException;
 import org.renci.common.exec.CommandInput;
 import org.renci.common.exec.CommandOutput;
+import org.renci.common.exec.Executor;
+import org.renci.common.exec.ExecutorException;
 
 /**
  * 
@@ -96,8 +96,9 @@ public class ExecutorTest {
         Map env = new HashMap();
         env.put("TESTVARIABLE", "somevalue");
         input.setEnvironment(env);
+        File userHome = new File(System.getProperty("user.home"));
         try {
-            CommandOutput output = executor.execute(input);
+            CommandOutput output = executor.execute(input, new File(userHome, ".bashrc"));
             exitCode = output.getExitCode();
             assertTrue(exitCode == 0);
         } catch (ExecutorException e) {

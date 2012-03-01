@@ -20,9 +20,6 @@ public class CommandInput implements Serializable {
     private Map<String, String> environment;
 
     // the command to run
-    private File sourceFile;
-
-    // the command to run
     private String command;
 
     // timeout for the command - in seconds
@@ -120,21 +117,6 @@ public class CommandInput implements Serializable {
      */
     public void setStdin(StringBuffer stdin) {
         this.stdin = stdin;
-    }
-
-    /**
-     * @return the sourceFile
-     */
-    public File getSourceFile() {
-        return sourceFile;
-    }
-
-    /**
-     * @param sourceFile
-     *            the sourceFile to set
-     */
-    public void setSourceFile(File sourceFile) {
-        this.sourceFile = sourceFile;
     }
 
 }
