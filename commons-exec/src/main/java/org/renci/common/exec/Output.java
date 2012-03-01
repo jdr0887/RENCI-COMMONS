@@ -1,19 +1,44 @@
 package org.renci.common.exec;
 
-public class Output {
+import java.io.Serializable;
+import java.util.Date;
 
-    protected int exitCode;
+/**
+ * 
+ * @author jdr0887
+ * 
+ */
+public class Output implements Serializable {
 
-    protected StringBuffer stdout;
+    private static final long serialVersionUID = -3237512903661251806L;
 
-    protected StringBuffer stderr;
+    private int exitCode;
 
-    /**
-     * 
-     * @param command
-     *            command to run
-     */
+    private StringBuffer stdout;
+
+    private StringBuffer stderr;
+
+    private Date startDate;
+
+    private Date endDate;
+
     public Output() {
+    }
+
+    public Date getStartDate() {
+        return startDate;
+    }
+
+    public void setStartDate(Date startDate) {
+        this.startDate = startDate;
+    }
+
+    public Date getEndDate() {
+        return endDate;
+    }
+
+    public void setEndDate(Date endDate) {
+        this.endDate = endDate;
     }
 
     /**
