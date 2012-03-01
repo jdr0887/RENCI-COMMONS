@@ -1,24 +1,35 @@
 package org.renci.common.exec;
 
 import java.io.File;
+import java.io.Serializable;
 import java.util.Map;
 
-public class Input {
+/**
+ * 
+ * @author jdr0887
+ * 
+ */
+public class Input implements Serializable {
+
+    private static final long serialVersionUID = 2997188750784524667L;
 
     // the directory where to run the command from
-    protected File workDir;
+    private File workDir;
 
     // the shell environment
-    protected Map<String, String> environment;
+    private Map<String, String> environment;
 
     // the command to run
-    protected String command;
+    private File sourceFile;
+
+    // the command to run
+    private String command;
 
     // timeout for the command - in seconds
-    protected long maxRunTime = 60;
+    private long maxRunTime = 60;
 
     // stdin
-    protected StringBuffer stdin;
+    private StringBuffer stdin;
 
     /**
      * 
@@ -109,6 +120,21 @@ public class Input {
      */
     public void setStdin(StringBuffer stdin) {
         this.stdin = stdin;
+    }
+
+    /**
+     * @return the sourceFile
+     */
+    public File getSourceFile() {
+        return sourceFile;
+    }
+
+    /**
+     * @param sourceFile
+     *            the sourceFile to set
+     */
+    public void setSourceFile(File sourceFile) {
+        this.sourceFile = sourceFile;
     }
 
 }
