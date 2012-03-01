@@ -39,7 +39,7 @@ public class BashExecutor extends AbstractExecutor {
      * @return exit code
      * @throws ShellExecutorException
      */
-    public Output execute(Input input) throws ExecutorException {
+    public CommandOutput execute(CommandInput input) throws ExecutorException {
         logger.debug("ENTERING run(ShellInput)");
         Runtime runtime = Runtime.getRuntime();
         Process process = null;
@@ -52,7 +52,7 @@ public class BashExecutor extends AbstractExecutor {
         long processStartTime = System.currentTimeMillis();
         String delayedError = null;
 
-        Output output = new Output();
+        CommandOutput output = new CommandOutput();
         output.setStartDate(new Date());
 
         // create a shell script with the command line in it

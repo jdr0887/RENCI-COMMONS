@@ -8,6 +8,6 @@ public interface Executor {
      * @return exit code
      * @throws ExecutorException
      */
-    public Output execute(Input input) throws ExecutorException;
+    public CommandOutput execute(CommandInput input) throws ExecutorException;
 
 }
