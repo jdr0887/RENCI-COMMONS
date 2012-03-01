@@ -56,7 +56,7 @@ public class BashExecutor extends AbstractExecutor {
         output.setStartDate(new Date());
 
         // create a shell script with the command line in it
-        wrapperContents = String.format("#!/bin/bash -e%n%s%ncd %s%n%s%n", input.getSourceFile() == null ? "" : input
+        wrapperContents = String.format("#!/bin/bash -e%n%s%ncd %s%n%s%n", input.getSourceFile() == null ? "" : ". " + input
                 .getSourceFile().getAbsolutePath(), input.getWorkDir().getAbsolutePath(), input.getCommand());
         try {
             wrapperFile = File.createTempFile("shellwrapper-", ".sh", input.getWorkDir());
