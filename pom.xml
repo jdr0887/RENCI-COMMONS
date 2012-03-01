@@ -161,9 +161,39 @@
 	<artifactId>log4j</artifactId>
 	<version>1.2.14</version>
       </dependency>
+      <dependency>
+	<groupId>org.slf4j</groupId>
+	<artifactId>slf4j-api</artifactId>
+	<version>1.6.2</version>
+      </dependency>
+      <dependency>
+	<groupId>org.slf4j</groupId>
+	<artifactId>slf4j-simple</artifactId>
+	<version>1.6.2</version>
+      </dependency>
+      <dependency>
+	<groupId>org.ops4j.pax.logging</groupId>
+	<artifactId>pax-logging-service</artifactId>
+	<version>1.6.3</version>
+      </dependency>
+      <dependency>
+	<groupId>org.ops4j.pax.logging</groupId>
+	<artifactId>pax-logging-api</artifactId>
+	<version>1.6.3</version>
+    </dependency>
     </dependencies>
   </dependencyManagement>  
   <dependencies>
+    <dependency>
+      <groupId>org.ops4j.pax.logging</groupId>
+      <artifactId>pax-logging-service</artifactId>
+      <scope>provided</scope>
+    </dependency>
+    <dependency>
+      <groupId>org.ops4j.pax.logging</groupId>
+      <artifactId>pax-logging-api</artifactId>
+      <scope>provided</scope>
+    </dependency>
     <dependency>
       <groupId>junit</groupId>
       <artifactId>junit</artifactId>
