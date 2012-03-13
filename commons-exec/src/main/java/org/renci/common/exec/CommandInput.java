@@ -23,7 +23,7 @@ public class CommandInput implements Serializable {
     private String command;
 
     // timeout for the command - in seconds
-    private long maxRunTime = 60;
+    private long maxRunTime = 0;
 
     // stdin
     private StringBuffer stdin;
