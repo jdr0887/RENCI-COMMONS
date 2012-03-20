@@ -9,11 +9,11 @@ public class StreamGobbler extends Thread {
     
     private InputStream inputStream;
 
-    private StringBuffer output;
+    private StringBuilder output;
 
     StreamGobbler(InputStream inputStream) {
         this.inputStream = inputStream;
-        this.output = new StringBuffer();
+        this.output = new StringBuilder();
     }
 
     public void run() {
@@ -32,7 +32,7 @@ public class StreamGobbler extends Thread {
         }
     }
 
-    public StringBuffer getOutput() {
+    public StringBuilder getOutput() {
         return output;
     }
     

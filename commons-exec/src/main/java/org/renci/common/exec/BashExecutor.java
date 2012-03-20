@@ -157,10 +157,12 @@ public class BashExecutor extends AbstractExecutor {
 
             // get the outputs weather the process failed or not
             if (stdoutGobbler != null) {
-                output.setStdout(stdoutGobbler.getOutput());
+                output.getStdout().delete(0, output.getStdout().length());
+                output.getStdout().append(stdoutGobbler.getOutput());
             }
             if (stderrGobbler != null) {
-                output.setStderr(stderrGobbler.getOutput());
+                output.getStderr().delete(0, output.getStderr().length());
+                output.getStderr().append(stderrGobbler.getOutput());
             }
 
             try {

@@ -14,9 +14,9 @@ public class CommandOutput implements Serializable {
 
     private int exitCode;
 
-    private StringBuffer stdout;
+    private StringBuilder stdout = new StringBuilder();
 
-    private StringBuffer stderr;
+    private StringBuilder stderr = new StringBuilder();
 
     private Date startDate;
 
@@ -67,7 +67,7 @@ public class CommandOutput implements Serializable {
     /**
      * @return the stdout
      */
-    public StringBuffer getStdout() {
+    public StringBuilder getStdout() {
         return stdout;
     }
 
@@ -75,14 +75,14 @@ public class CommandOutput implements Serializable {
      * @param stdout
      *            the stdout to set
      */
-    public void setStdout(StringBuffer stdout) {
+    public void setStdout(StringBuilder stdout) {
         this.stdout = stdout;
     }
 
     /**
      * @return the stderr
      */
-    public StringBuffer getStderr() {
+    public StringBuilder getStderr() {
         return stderr;
     }
 
@@ -90,7 +90,7 @@ public class CommandOutput implements Serializable {
      * @param stderr
      *            the stderr to set
      */
-    public void setStderr(StringBuffer stderr) {
+    public void setStderr(StringBuilder stderr) {
         this.stderr = stderr;
     }
 
