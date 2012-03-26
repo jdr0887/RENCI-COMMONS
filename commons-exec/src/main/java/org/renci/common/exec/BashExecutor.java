@@ -61,7 +61,9 @@ public class BashExecutor extends AbstractExecutor {
         StringBuilder sourceFileSB = new StringBuilder();
         if (sources != null && sources.length > 0) {
             for (File source : sources) {
-                sourceFileSB.append(String.format(". %s%n", source.getAbsolutePath()));
+                if (source.exists()) {
+                    sourceFileSB.append(String.format(". %s%n", source.getAbsolutePath()));
+                }
             }
         }
 
