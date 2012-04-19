@@ -13,29 +13,19 @@ public class CommandInput implements Serializable {
 
     private static final long serialVersionUID = 2997188750784524667L;
 
-    // the directory where to run the command from
     private File workDir;
 
-    // the shell environment
     private Map<String, String> environment;
 
-    // the command to run
     private String command;
 
-    // timeout for the command - in seconds
     private long maxRunTime = 0;
 
-    // stdin
     private StringBuffer stdin;
 
-    /**
-     * 
-     * @param command
-     *            command to run
-     */
     public CommandInput() {
         this.environment = null;
-        this.workDir = new File("/tmp");
+        this.workDir = new File(System.getProperty("java.io.tmpdir"));
     }
 
     public CommandInput(String command, File workDir) {
