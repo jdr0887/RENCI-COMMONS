@@ -38,6 +38,30 @@ public class ExecutorTest {
     }
 
     @Test
+    public void testStderr() {
+        CommandInput input = new CommandInput("cd asdfasd", new File("/tmp"));
+        try {
+            CommandOutput output = executor.execute(input);
+            assertTrue(output.getStderr().indexOf("No such file or directory") != -1);
+        } catch (ExecutorException e) {
+            e.printStackTrace();
+            assertTrue(false);
+        }
+    }
+
+    @Test
+    public void testStdout() {
+        CommandInput input = new CommandInput("echo foo", new File("/tmp"));
+        try {
+            CommandOutput output = executor.execute(input);
+            assertTrue(output.getStdout().indexOf("foo") != -1);
+        } catch (ExecutorException e) {
+            e.printStackTrace();
+            assertTrue(false);
+        }
+    }
+
+    @Test
     public void testBinTrue() {
         CommandInput input = new CommandInput("/bin/true", new File("/tmp"));
         int exitCode = -1;
