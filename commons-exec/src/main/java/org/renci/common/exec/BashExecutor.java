@@ -42,7 +42,7 @@ public class BashExecutor extends AbstractExecutor {
      */
     public CommandOutput execute(CommandInput input, File... sources) throws ExecutorException {
 
-        logger.debug("ENTERING run(ShellInput)");
+        logger.debug("ENTERING execute(CommandInput, File...)");
         Runtime runtime = Runtime.getRuntime();
         Process process = null;
         BufferedOutputStream stdinStream = null;
@@ -67,11 +67,16 @@ public class BashExecutor extends AbstractExecutor {
             }
         }
 
-        wrapperContents = String.format("#!/bin/bash -e%n%s%ncd %s%n%s%n", sourceFileSB.length() == 0 ? ""
-                : sourceFileSB.toString(), input.getWorkDir().getAbsolutePath(), input.getCommand());
+        if (input.getExitImmediately()) {
+            wrapperContents = String.format("#!/bin/bash -e%n%s%ncd %s%n%s%n", sourceFileSB.length() == 0 ? ""
+                    : sourceFileSB.toString(), input.getWorkDir().getAbsolutePath(), input.getCommand());
+        } else {
+            wrapperContents = String.format("#!/bin/bash%n%s%ncd %s%n%s%n", sourceFileSB.length() == 0 ? ""
+                    : sourceFileSB.toString(), input.getWorkDir().getAbsolutePath(), input.getCommand());
+        }
         try {
             wrapperFile = File.createTempFile("shellwrapper-", ".sh", input.getWorkDir());
-            logger.info("wrapperContents: {}", wrapperContents);
+            logger.debug("wrapperContents: {}", wrapperContents);
             FileUtils.writeStringToFile(wrapperFile, wrapperContents, "UTF-8");
         } catch (IOException e) {
             throw new ExecutorException("Unable to create tmp file");
@@ -92,7 +97,7 @@ public class BashExecutor extends AbstractExecutor {
             if (input.getEnvironment() != null) {
                 env = environmentToArray(input.getEnvironment());
             }
-            logger.info("running command: {}", input.getCommand());
+
             process = runtime.exec(wrapperFile.getAbsolutePath(), env, input.getWorkDir());
 
             // outputs
@@ -142,30 +147,26 @@ public class BashExecutor extends AbstractExecutor {
             try {
                 exitCode = process.waitFor();
                 output.setExitCode(exitCode);
+
+                // get the outputs weather the process failed or not
+                if (stdoutGobbler != null) {
+                    output.setStdout(stdoutGobbler.getOutput());
+                }
+
+                if (stderrGobbler != null) {
+                    output.setStderr(stderrGobbler.getOutput());
+                }
+
+                stdoutGobbler.join(2000);
+                stderrGobbler.join(2000);
+
             } catch (InterruptedException exp) {
                 delayedError = exp.getMessage();
-            }
-
-            // let the io streams buffering catch up
-            try {
-                Thread.sleep(200);
-            } catch (InterruptedException e) {
-                // ignore
             }
 
         } catch (IOException ioe) {
             throw new ExecutorException("Process error: " + ioe.getMessage());
         } finally {
-
-            // get the outputs weather the process failed or not
-            if (stdoutGobbler != null) {
-                output.getStdout().delete(0, output.getStdout().length());
-                output.getStdout().append(stdoutGobbler.getOutput());
-            }
-            if (stderrGobbler != null) {
-                output.getStderr().delete(0, output.getStderr().length());
-                output.getStderr().append(stderrGobbler.getOutput());
-            }
 
             try {
 
@@ -176,6 +177,7 @@ public class BashExecutor extends AbstractExecutor {
                 if (stdoutGobbler != null) {
                     stdoutGobbler.close();
                 }
+
                 if (stderrGobbler != null) {
                     stderrGobbler.close();
                 }
