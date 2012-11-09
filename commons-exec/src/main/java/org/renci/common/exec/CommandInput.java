@@ -19,19 +19,23 @@ public class CommandInput implements Serializable {
 
     private String command;
 
-    private long maxRunTime = 0;
+    private Boolean exitImmediately;
+
+    private long maxRunTime;
 
     private StringBuffer stdin;
 
     public CommandInput() {
-        this.environment = null;
         this.workDir = new File(System.getProperty("java.io.tmpdir"));
+        this.maxRunTime = 0;
+        this.exitImmediately = Boolean.TRUE;
     }
 
     public CommandInput(String command, File workDir) {
-        this.environment = null;
         this.workDir = workDir;
         this.command = command;
+        this.maxRunTime = 0;
+        this.exitImmediately = Boolean.TRUE;
     }
 
     /**
@@ -107,6 +111,21 @@ public class CommandInput implements Serializable {
      */
     public void setStdin(StringBuffer stdin) {
         this.stdin = stdin;
+    }
+
+    /**
+     * @return the exitImmediately
+     */
+    public Boolean getExitImmediately() {
+        return exitImmediately;
+    }
+
+    /**
+     * @param exitImmediately
+     *            the exitImmediately to set
+     */
+    public void setExitImmediately(Boolean exitImmediately) {
+        this.exitImmediately = exitImmediately;
     }
 
 }
