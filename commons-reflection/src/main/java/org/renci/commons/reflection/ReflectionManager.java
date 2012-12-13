@@ -43,6 +43,7 @@ public class ReflectionManager {
      * @param filteredAnnotation
      * @return
      */
+    @SuppressWarnings({ "unchecked", "rawtypes" })
     public List<Class<?>> lookupClassList(String pkg, String regex, Class filteredAnnotation) {
         List<Class<?>> ret = new ArrayList<Class<?>>();
         List<Class<?>> classList = new ArrayList<Class<?>>();
