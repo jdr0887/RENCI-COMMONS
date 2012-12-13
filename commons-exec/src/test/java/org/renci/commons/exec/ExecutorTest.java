@@ -91,7 +91,7 @@ public class ExecutorTest {
 
     @Test
     public void testInputRedirect() {
-        CommandInput input = new CommandInput("/bin/true </dev/null", new File("/tmp"));
+        CommandInput input = new CommandInput("/bin/true < /dev/null", new File("/tmp"));
         try {
             executor.execute(input);
         } catch (ExecutorException e) {
@@ -103,6 +103,19 @@ public class ExecutorTest {
     @Test
     public void testBigOutput() {
         CommandInput input = new CommandInput("find /usr/bin", new File("/tmp"));
+        try {
+            CommandOutput output = executor.execute(input);
+            assertTrue(output.getStdout().length() > 0);
+            assertTrue(output.getStderr().length() == 0);
+        } catch (ExecutorException e) {
+            e.printStackTrace();
+            assertTrue(false);
+        }
+    }
+
+    @Test
+    public void testSleep() {
+        CommandInput input = new CommandInput("echo asdf; sleep 5; echo zxcv", new File("/tmp"));
         try {
             CommandOutput output = executor.execute(input);
             assertTrue(output.getStdout().length() > 0);
