@@ -50,6 +50,18 @@ public class ExecutorTest {
     }
 
     @Test
+    public void testNoExitImmediately() {
+        CommandInput input = new CommandInput("cd asdfasd; /bin/date", new File("/tmp"), Boolean.FALSE);
+        try {
+            CommandOutput output = executor.execute(input);
+            assertTrue(output.getStderr().indexOf("No such file or directory") != -1);
+        } catch (ExecutorException e) {
+            e.printStackTrace();
+            assertTrue(false);
+        }
+    }
+
+    @Test
     public void testStdout() {
         CommandInput input = new CommandInput("echo foo", new File("/tmp"));
         try {
