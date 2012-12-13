@@ -1,4 +1,0 @@
-<configuration>
-	<system/>
-	<properties fileName="${projectName}.properties"/>
-</configuration>
