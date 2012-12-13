@@ -3,8 +3,6 @@ package org.renci.common.exec;
 import java.io.BufferedOutputStream;
 import java.io.File;
 import java.io.IOException;
-import java.io.InputStream;
-import java.io.OutputStream;
 import java.util.Date;
 
 import org.apache.commons.io.FileUtils;
@@ -16,7 +14,7 @@ import org.slf4j.LoggerFactory;
  * @author jdr0887
  * 
  */
-public class BashExecutor extends AbstractExecutor {
+public class BashExecutor implements Executor {
 
     private final Logger logger = LoggerFactory.getLogger(BashExecutor.class);
 
@@ -41,16 +39,10 @@ public class BashExecutor extends AbstractExecutor {
      * , java.io.File[])
      */
     public CommandOutput execute(CommandInput input, File... sources) throws ExecutorException {
-
         logger.debug("ENTERING execute(CommandInput, File...)");
-        Runtime runtime = Runtime.getRuntime();
-        Process process = null;
         BufferedOutputStream stdinStream = null;
-        StreamGobbler stdoutGobbler = null;
-        StreamGobbler stderrGobbler = null;
         int exitCode = -1;
         File wrapperFile = null;
-        String wrapperContents = null;
         long processStartTime = System.currentTimeMillis();
         String delayedError = null;
 
@@ -67,15 +59,18 @@ public class BashExecutor extends AbstractExecutor {
             }
         }
 
-        if (input.getExitImmediately()) {
-            wrapperContents = String.format("#!/bin/bash -e%n%s%ncd %s%n%s%n", sourceFileSB.length() == 0 ? ""
-                    : sourceFileSB.toString(), input.getWorkDir().getAbsolutePath(), input.getCommand());
-        } else {
-            wrapperContents = String.format("#!/bin/bash%n%s%ncd %s%n%s%n", sourceFileSB.length() == 0 ? ""
-                    : sourceFileSB.toString(), input.getWorkDir().getAbsolutePath(), input.getCommand());
-        }
         try {
             wrapperFile = File.createTempFile("shellwrapper-", ".sh", input.getWorkDir());
+
+            String wrapperContents;
+            if (input.getExitImmediately()) {
+                wrapperContents = String.format("#!/bin/bash -e%n%s%ncd %s%n%s%n", sourceFileSB.length() == 0 ? ""
+                        : sourceFileSB.toString(), input.getWorkDir().getAbsolutePath(), input.getCommand());
+            } else {
+                wrapperContents = String.format("#!/bin/bash%n%s%ncd %s%n%s%n", sourceFileSB.length() == 0 ? ""
+                        : sourceFileSB.toString(), input.getWorkDir().getAbsolutePath(), input.getCommand());
+            }
+
             logger.debug("wrapperContents: {}", wrapperContents);
             FileUtils.writeStringToFile(wrapperFile, wrapperContents, "UTF-8");
         } catch (IOException e) {
@@ -84,7 +79,7 @@ public class BashExecutor extends AbstractExecutor {
 
         // chmod the temp command file
         try {
-            process = runtime.exec("/bin/chmod 755 " + wrapperFile.getAbsolutePath());
+            Process process = new ProcessBuilder("/bin/chmod", "755", wrapperFile.getAbsolutePath()).start();
             process.waitFor();
         } catch (IOException ioe) {
             throw new ExecutorException("chmod problem: " + ioe.getMessage());
@@ -93,18 +88,17 @@ public class BashExecutor extends AbstractExecutor {
         }
 
         try {
-            String[] env = null;
+            File stdErrFile = new File(input.getWorkDir(), wrapperFile.getName().replace(".sh", ".err"));
+            File stdOutFile = new File(input.getWorkDir(), wrapperFile.getName().replace(".sh", ".out"));
+
+            ProcessBuilder processBuilder = new ProcessBuilder(wrapperFile.getAbsolutePath());
+            processBuilder.directory(input.getWorkDir());
             if (input.getEnvironment() != null) {
-                env = environmentToArray(input.getEnvironment());
+                processBuilder.environment().putAll(input.getEnvironment());
             }
-
-            process = runtime.exec(wrapperFile.getAbsolutePath(), env, input.getWorkDir());
-
-            // outputs
-            stdoutGobbler = new StreamGobbler(process.getInputStream());
-            stdoutGobbler.start();
-            stderrGobbler = new StreamGobbler(process.getErrorStream());
-            stderrGobbler.start();
+            processBuilder.redirectError(stdErrFile);
+            processBuilder.redirectOutput(stdOutFile);
+            Process process = processBuilder.start();
 
             // inputs
             if (input.getStdin() != null) {
@@ -144,70 +138,32 @@ public class BashExecutor extends AbstractExecutor {
                 }
             }
 
-            try {
-                exitCode = process.waitFor();
-                output.setExitCode(exitCode);
+            exitCode = process.waitFor();
+            output.setExitCode(exitCode);
+            output.getStderr().append(FileUtils.readFileToString(stdErrFile));
+            output.getStdout().append(FileUtils.readFileToString(stdOutFile));
+            output.setEndDate(new Date());
 
-                // get the outputs weather the process failed or not
-                if (stdoutGobbler != null) {
-                    output.setStdout(stdoutGobbler.getOutput());
-                }
-
-                if (stderrGobbler != null) {
-                    output.setStderr(stderrGobbler.getOutput());
-                }
-
-                stdoutGobbler.join(2000);
-                stderrGobbler.join(2000);
-
-            } catch (InterruptedException exp) {
-                delayedError = exp.getMessage();
+            // clean up
+            if (output.getExitCode() == 0) {
+                wrapperFile.delete();
+                stdErrFile.delete();
+                stdOutFile.delete();
             }
 
+        } catch (InterruptedException e) {
+            delayedError = e.getMessage();
         } catch (IOException ioe) {
             throw new ExecutorException("Process error: " + ioe.getMessage());
         } finally {
-
             try {
-
                 if (stdinStream != null) {
                     stdinStream.close();
                 }
-
-                if (stdoutGobbler != null) {
-                    stdoutGobbler.close();
-                }
-
-                if (stderrGobbler != null) {
-                    stderrGobbler.close();
-                }
-
-                // close streams
-                if (process != null) {
-                    InputStream istr = process.getInputStream();
-                    if (istr != null) {
-                        istr.close();
-                    }
-                    OutputStream ostr = process.getOutputStream();
-                    if (ostr != null) {
-                        ostr.close();
-                    }
-                    istr = process.getErrorStream();
-                    if (istr != null) {
-                        istr.close();
-                    }
-                    process.destroy();
-                }
-
             } catch (IOException exp) {
                 // ignore
             }
-
         }
-
-        // clean up
-        wrapperFile.delete();
-        output.setEndDate(new Date());
 
         if (delayedError != null) {
             throw new ExecutorException(delayedError);
