@@ -31,11 +31,19 @@ public class CommandInput implements Serializable {
         this.exitImmediately = Boolean.TRUE;
     }
 
-    public CommandInput(String command, File workDir) {
-        this.workDir = workDir;
+    public CommandInput(String command) {
+        this();
         this.command = command;
-        this.maxRunTime = 0;
-        this.exitImmediately = Boolean.TRUE;
+    }
+
+    public CommandInput(String command, File workDir) {
+        this(command);
+        this.workDir = workDir;
+    }
+
+    public CommandInput(String command, File workDir, Boolean exitImmediately) {
+        this(command, workDir);
+        this.exitImmediately = exitImmediately;
     }
 
     /**
