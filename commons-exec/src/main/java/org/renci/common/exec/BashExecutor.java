@@ -10,11 +10,6 @@ import org.apache.commons.io.IOUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-/**
- * 
- * @author jdr0887
- * 
- */
 public class BashExecutor implements Executor {
 
     private static final Logger logger = LoggerFactory.getLogger(BashExecutor.class);
