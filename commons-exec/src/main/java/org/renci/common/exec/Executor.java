@@ -10,22 +10,10 @@ import java.util.Map;
  */
 public interface Executor {
 
-    /**
-     * 
-     * @param input
-     * @return
-     * @throws ExecutorException
-     */
     public CommandOutput execute(CommandInput input) throws ExecutorException;
 
-    /**
-     * 
-     * @param input
-     * @param substitutionMap
-     * @param sources
-     * @return
-     * @throws ExecutorException
-     */
+    public CommandOutput execute(CommandInput input, File... sources) throws ExecutorException;
+
     public CommandOutput execute(CommandInput input, Map<String, String> substitutionMap, File... sources)
             throws ExecutorException;
 
