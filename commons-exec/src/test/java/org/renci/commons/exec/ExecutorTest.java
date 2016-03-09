@@ -16,16 +16,7 @@ import org.renci.common.exec.CommandOutput;
 import org.renci.common.exec.Executor;
 import org.renci.common.exec.ExecutorException;
 
-/**
- * 
- * @author rynge
- */
 public class ExecutorTest {
-
-    static {
-        System.setProperty("org.apache.commons.exec.lenient", "false");
-        System.setProperty("org.apache.commons.exec.debug", "true");
-    }
 
     @Test
     public void testBinDate() {
@@ -161,7 +152,7 @@ public class ExecutorTest {
         File userHome = new File(System.getProperty("user.home"));
         try {
             Executor executor = BashExecutor.getInstance();
-            CommandOutput output = executor.execute(input, null, new File(userHome, ".bashrc"));
+            CommandOutput output = executor.execute(input, new File(userHome, ".bashrc"));
             exitCode = output.getExitCode();
             assertTrue(exitCode == 0);
         } catch (ExecutorException e) {
