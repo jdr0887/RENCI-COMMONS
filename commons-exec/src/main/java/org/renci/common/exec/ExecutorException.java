@@ -1,9 +1,5 @@
 package org.renci.common.exec;
 
-/**
- * 
- * @author rynge
- */
 public class ExecutorException extends Exception {
 
     /**
