@@ -7,7 +7,7 @@
   <name>RENCI COMMONS</name>
   <modelVersion>4.0.0</modelVersion>
   <groupId>org.renci</groupId>
-  <version>0.2.1-SNAPSHOT</version>
+  <version>0.2.1</version>
   <artifactId>commons</artifactId>
   <packaging>pom</packaging>
   <properties>
@@ -30,6 +30,7 @@
     <url>https://github.com/jdr0887/RENCI-COMMONS</url>    
     <connection>scm:git:git@github.com:jdr0887/RENCI-COMMONS.git</connection>
     <developerConnection>scm:git:git@github.com:jdr0887/RENCI-COMMONS.git</developerConnection>
+    <tag>commons-0.2.1</tag>
   </scm>
   <developers>
     <developer>
