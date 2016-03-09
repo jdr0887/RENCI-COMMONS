@@ -1,17 +1,15 @@
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
-  <name>COMMONS-EXEC</name>
   <parent>
     <groupId>org.renci</groupId>
     <artifactId>commons</artifactId>
     <version>0.2.1-SNAPSHOT</version>
   </parent>
   <modelVersion>4.0.0</modelVersion>
+  <name>RENCI COMMONS :: COMMONS-EXEC</name>  
   <groupId>org.renci.commons</groupId>
   <artifactId>commons-exec</artifactId>
   <version>0.2.1-SNAPSHOT</version>
   <packaging>bundle</packaging>
-  <dependencies>
-  </dependencies>
   <build>
     <plugins>
       <plugin>
@@ -19,52 +17,9 @@
         <artifactId>maven-bundle-plugin</artifactId>
         <configuration>
           <instructions>
-            <Export-Package>org.renci.common.exec.*;version=${project.version}</Export-Package>
+            <Export-Package>org.renci.common.exec*</Export-Package>
             <Import-Package>*</Import-Package>
           </instructions>
-        </configuration>
-      </plugin>
-      <plugin>
-        <groupId>org.apache.maven.plugins</groupId>
-        <artifactId>maven-site-plugin</artifactId>
-        <version>3.0</version>
-        <configuration>
-	  <reportPlugins>
-	    <plugin>
-	      <groupId>org.apache.maven.plugins</groupId>
-	      <artifactId>maven-project-info-reports-plugin</artifactId>
-	      <version>${maven.project.info.reports.plugin}</version>
-	      <configuration>
-		<dependencyDetailsEnabled>false</dependencyDetailsEnabled>
-		<dependencyLocationsEnabled>false</dependencyLocationsEnabled>
-	      </configuration>
-	      <reports>
-	      </reports>
-	    </plugin>
-	    <plugin>
-	      <groupId>org.apache.maven.plugins</groupId>
-	      <artifactId>maven-javadoc-plugin</artifactId>
-	      <version>${maven.javadoc.plugin}</version>
-	    </plugin>
-	    <plugin>
-	      <groupId>org.apache.maven.plugins</groupId>
-	      <artifactId>maven-jxr-plugin</artifactId>
-	      <version>${maven.jxr.plugin}</version>
-	      <configuration>
-		<aggregate>true</aggregate>
-	      </configuration>
-	    </plugin>
-	    <plugin>
-	      <groupId>org.apache.maven.plugins</groupId>
-	      <artifactId>maven-surefire-report-plugin</artifactId>
-	      <version>${maven.surefire.report.plugin}</version>
-	    </plugin>
-	    <plugin>
-	      <groupId>org.apache.maven.plugins</groupId>
-	      <artifactId>maven-checkstyle-plugin</artifactId>
-	      <version>${maven.checkstyle.plugin}</version>
-	    </plugin>
-	  </reportPlugins>
         </configuration>
       </plugin>
     </plugins>
