@@ -1,11 +1,12 @@
 package org.renci.common.exec;
 
-import java.io.BufferedOutputStream;
 import java.io.File;
 import java.io.IOException;
 import java.util.Date;
+import java.util.Map;
 
 import org.apache.commons.io.FileUtils;
+import org.apache.commons.io.IOUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -16,7 +17,7 @@ import org.slf4j.LoggerFactory;
  */
 public class BashExecutor implements Executor {
 
-    private final Logger logger = LoggerFactory.getLogger(BashExecutor.class);
+    private static final Logger logger = LoggerFactory.getLogger(BashExecutor.class);
 
     private static BashExecutor instance = null;
 
@@ -31,17 +32,9 @@ public class BashExecutor implements Executor {
         super();
     }
 
-    /*
-     * (non-Javadoc)
-     * 
-     * @see
-     * org.renci.common.exec.Executor#execute(org.renci.common.exec.CommandInput
-     * , java.io.File[])
-     */
-    public CommandOutput execute(CommandInput input, File... sources) throws ExecutorException {
+    public CommandOutput execute(CommandInput input, Map<String, String> subsitutionMap, File... sources)
+            throws ExecutorException {
         logger.debug("ENTERING execute(CommandInput, File...)");
-        BufferedOutputStream stdinStream = null;
-        int exitCode = -1;
         File wrapperFile = null;
         long processStartTime = System.currentTimeMillis();
         String delayedError = null;
@@ -59,16 +52,29 @@ public class BashExecutor implements Executor {
             }
         }
 
+        logger.info(input.toString());
+
         try {
+            
             wrapperFile = File.createTempFile("shellwrapper-", ".sh", input.getWorkDir());
+            String resolvedCommand = input.getCommand();
+            if (subsitutionMap != null) {
+                for (String key : subsitutionMap.keySet()) {
+                    if (resolvedCommand.contains(key)) {
+                        resolvedCommand = resolvedCommand.replaceAll(key, subsitutionMap.get(key));
+                    }
+                }
+            }
 
             String wrapperContents;
             if (input.getExitImmediately()) {
-                wrapperContents = String.format("#!/bin/bash -e%n%s%ncd %s%n%s%n", sourceFileSB.length() == 0 ? ""
-                        : sourceFileSB.toString(), input.getWorkDir().getAbsolutePath(), input.getCommand());
+                wrapperContents = String.format("#!/bin/bash -e%n%s%ncd %s%n%s%n",
+                        sourceFileSB.length() == 0 ? "" : sourceFileSB.toString(), input.getWorkDir().getAbsolutePath(),
+                        resolvedCommand);
             } else {
-                wrapperContents = String.format("#!/bin/bash%n%s%ncd %s%n%s%n", sourceFileSB.length() == 0 ? ""
-                        : sourceFileSB.toString(), input.getWorkDir().getAbsolutePath(), input.getCommand());
+                wrapperContents = String.format("#!/bin/bash%n%s%ncd %s%n%s%n",
+                        sourceFileSB.length() == 0 ? "" : sourceFileSB.toString(), input.getWorkDir().getAbsolutePath(),
+                        resolvedCommand);
             }
 
             logger.debug("wrapperContents: {}", wrapperContents);
@@ -77,33 +83,20 @@ public class BashExecutor implements Executor {
             throw new ExecutorException("Unable to create tmp file");
         }
 
-        // chmod the temp command file
-        try {
-            Process process = new ProcessBuilder("/bin/chmod", "755", wrapperFile.getAbsolutePath()).start();
-            process.waitFor();
-        } catch (IOException ioe) {
-            throw new ExecutorException("chmod problem: " + ioe.getMessage());
-        } catch (InterruptedException e) {
-            // ignore
-        }
-
         try {
             File stdErrFile = new File(input.getWorkDir(), wrapperFile.getName().replace(".sh", ".err"));
             File stdOutFile = new File(input.getWorkDir(), wrapperFile.getName().replace(".sh", ".out"));
 
-            ProcessBuilder processBuilder = new ProcessBuilder(wrapperFile.getAbsolutePath());
-            processBuilder.directory(input.getWorkDir());
+            ProcessBuilder processBuilder = new ProcessBuilder("/bin/bash", wrapperFile.getAbsolutePath());
+            processBuilder.directory(input.getWorkDir()).redirectError(stdErrFile).redirectOutput(stdOutFile);
             if (input.getEnvironment() != null) {
                 processBuilder.environment().putAll(input.getEnvironment());
             }
-            processBuilder.redirectError(stdErrFile);
-            processBuilder.redirectOutput(stdOutFile);
             Process process = processBuilder.start();
 
             // inputs
             if (input.getStdin() != null) {
-                stdinStream = new BufferedOutputStream(process.getOutputStream());
-                stdinStream.write(input.getStdin().toString().getBytes());
+                IOUtils.write(input.getStdin().toString().getBytes(), process.getOutputStream());
             }
 
             // do we have a max runtime to consider?
@@ -128,8 +121,7 @@ public class BashExecutor implements Executor {
 
                     // now check the process
                     try {
-                        exitCode = process.exitValue();
-                        output.setExitCode(exitCode);
+                        output.setExitCode(process.exitValue());
                         // can't get here until process has finished
                         stillRunning = false;
                     } catch (IllegalThreadStateException e) {
@@ -138,8 +130,7 @@ public class BashExecutor implements Executor {
                 }
             }
 
-            exitCode = process.waitFor();
-            output.setExitCode(exitCode);
+            output.setExitCode(process.waitFor());
             output.getStderr().append(FileUtils.readFileToString(stdErrFile));
             output.getStdout().append(FileUtils.readFileToString(stdOutFile));
             output.setEndDate(new Date());
@@ -155,14 +146,6 @@ public class BashExecutor implements Executor {
             delayedError = e.getMessage();
         } catch (IOException ioe) {
             throw new ExecutorException("Process error: " + ioe.getMessage());
-        } finally {
-            try {
-                if (stdinStream != null) {
-                    stdinStream.close();
-                }
-            } catch (IOException exp) {
-                // ignore
-            }
         }
 
         if (delayedError != null) {
@@ -172,14 +155,11 @@ public class BashExecutor implements Executor {
         return output;
     }
 
-    /*
-     * (non-Javadoc)
-     * 
-     * @see
-     * org.renci.common.exec.Executor#execute(org.renci.common.exec.CommandInput
-     * )
-     */
+    public CommandOutput execute(CommandInput input, File... sources) throws ExecutorException {
+        return execute(input, null, sources);
+    }
+
     public CommandOutput execute(CommandInput input) throws ExecutorException {
-        return execute(input, (File[]) null);
+        return execute(input, null, (File[]) null);
     }
 }
