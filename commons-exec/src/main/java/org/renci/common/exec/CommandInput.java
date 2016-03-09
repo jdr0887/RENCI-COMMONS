@@ -4,11 +4,6 @@ import java.io.File;
 import java.io.Serializable;
 import java.util.Map;
 
-/**
- * 
- * @author jdr0887
- * 
- */
 public class CommandInput implements Serializable {
 
     private static final long serialVersionUID = 2997188750784524667L;

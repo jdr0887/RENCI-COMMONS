@@ -3,11 +3,6 @@ package org.renci.common.exec;
 import java.io.Serializable;
 import java.util.Date;
 
-/**
- * 
- * @author jdr0887
- * 
- */
 public class CommandOutput implements Serializable {
 
     private static final long serialVersionUID = -3237512903661251806L;
@@ -41,57 +36,39 @@ public class CommandOutput implements Serializable {
         this.endDate = endDate;
     }
 
-    /**
-     * clear resources used
-     */
     public void clear() {
         stdout = null;
         stderr = null;
     }
 
-    /**
-     * @return the exitCode
-     */
     public int getExitCode() {
         return exitCode;
     }
 
-    /**
-     * @param exitCode
-     *            the exitCode to set
-     */
     public void setExitCode(int exitCode) {
         this.exitCode = exitCode;
     }
 
-    /**
-     * @return the stdout
-     */
     public StringBuilder getStdout() {
         return stdout;
     }
 
-    /**
-     * @param stdout
-     *            the stdout to set
-     */
     public void setStdout(StringBuilder stdout) {
         this.stdout = stdout;
     }
 
-    /**
-     * @return the stderr
-     */
     public StringBuilder getStderr() {
         return stderr;
     }
 
-    /**
-     * @param stderr
-     *            the stderr to set
-     */
     public void setStderr(StringBuilder stderr) {
         this.stderr = stderr;
+    }
+
+    @Override
+    public String toString() {
+        return String.format("CommandOutput [exitCode=%s, stdout=%s, stderr=%s, startDate=%s, endDate=%s]", exitCode,
+                stdout, stderr, startDate, endDate);
     }
 
 }
